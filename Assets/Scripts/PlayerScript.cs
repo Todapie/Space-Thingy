@@ -29,8 +29,12 @@ public class PlayerScript : MonoBehaviour {
 			inputRot += 1f;
 		if (Input.GetKey(KeyCode.D))
 			inputRot -= 1f;
-		if (Input.GetKey (KeyCode.Space)) {
-			Instantiate(bullet, transform.position, Quaternion.identity);
+		if (Input.GetKey(KeyCode.Space)) {
+			WeaponScript weapon = GetComponent<WeaponScript>();
+			if (weapon != null)
+			{
+				weapon.Attack(false, inputRot, new Vector2(inputX, inputY));
+			}
 		}
 		movement = new Vector2(
 			speed.x * inputX,
