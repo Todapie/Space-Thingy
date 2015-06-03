@@ -18,6 +18,8 @@ public class PlayerScript : MonoBehaviour {
 			inputY -= .1f;
 		if (Input.GetKey(KeyCode.A))
 			inputRot += 1f;
+		if (Input.GetKey(KeyCode.D))
+			inputRot -= 1f;
 		movement = new Vector2(
 			speed.x * inputX,
 			speed.y * inputY);
