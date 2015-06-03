@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
+	public GameObject bullet;
 	public Vector2 speed = new Vector2(1, 1);
 	private Vector2 movement;
 	public float inputX = 0.0f;
@@ -13,92 +14,10 @@ public class PlayerScript : MonoBehaviour {
 		if (inputRot > 360f)
 			inputRot -= 360f;
 		if (Input.GetKeyDown (KeyCode.W)) {
-			//Prevent divide by zero error when getting ratio of y/x from angle when the angle is 90 (tan(90) = UNDEFINED)
-			if (inputRot == 90f)
-				inputY += .5f;
-			else if(inputRot == 180f)
-				inputX -= .5f;
-			else if(inputRot == 0f || inputRot == 360f)
-				inputX += .5f;
-
-			if (inputRot != 90f || inputRot != 180f || inputRot != 0f || inputRot != 360f) {
-				//Get ratio from angle after converting radians to degrees, absolute value to prevent negatives
-				var ratio = Mathf.Abs(Mathf.Tan(inputRot * Mathf.PI / 180f));
-				var y = 0f;
-				var x = 0f;
-				var domainX = 1;
-				var domainY = 1;
-				
-				//Domains accounted for, multipliers set for later on when we change inputX and inputY
-				//(-x,+y)|(+x,+y)
-				//---------------
-				//(-x,-y)|(+x,-y)
-				//
-				if (inputRot > 90f && inputRot < 180f) {
-					domainX = -1;
-				} else if (inputRot > 180f && inputRot < 270f) {
-					domainX = -1;
-					domainY = -1;
-				} else if (inputRot > 270f && inputRot < 360f) {
-					domainY = -1;
-				}
-				//If ratio of y/x is greater than 1, we have to use percentages to determine how we increment x and y
-				if ((float)ratio > 1f) {
-					y = ratio / (ratio + 1f);
-					x = 1f / (ratio + 1f);
-				}
-				else {
-					x = (1f / (1f + ratio)) * 0.5f;
-					y = (ratio / (1f + ratio)) * 0.5f;
-				}
-				
-				inputX+= (x * domainX);
-				inputY += (y * domainY);
-			}
+			Accelerate(true);
 		}
 		if (Input.GetKeyDown (KeyCode.S)) {
-			//Prevent divide by zero error when getting ratio of y/x from angle when the angle is 90 (tan(90) = UNDEFINED)
-			if (inputRot == 90f)
-				inputY -= .5f;
-			else if(inputRot == 180f)
-				inputX += .5f;
-			else if(inputRot == 0f || inputRot == 360f)
-				inputX -= .5f;
-						
-			if (inputRot != 90f || inputRot != 180f || inputRot != 0f || inputRot != 360f) {
-				//Get ratio from angle after converting radians to degrees, absolute value to prevent negatives
-				var ratio = Mathf.Abs(Mathf.Tan(inputRot * Mathf.PI / 180f));
-				var y = 0f;
-				var x = 0f;
-				var domainX = 1;
-				var domainY = 1;
-				
-				//Domains accounted for, multipliers set for later on when we change inputX and inputY
-				//(-x,+y)|(+x,+y)
-				//---------------
-				//(-x,-y)|(+x,-y)
-				//
-				if (inputRot > 90f && inputRot < 180f) {
-					domainX = 1;
-				} else if (inputRot > 180f && inputRot < 270f) {
-					domainX = 1;
-					domainY = 1;
-				} else if (inputRot > 270f && inputRot < 360f) {
-					domainY = 1;
-				}
-				//If ratio of y/x is greater than 1, we have to use percentages to determine how we increment x and y
-				if ((float)ratio > 1f) {
-					y = ratio / (ratio + 1f);
-					x = 1f / (ratio + 1f);
-				}
-				else {
-					x = (1f / (1f + ratio)) * 0.5f;
-					y = (ratio / (1f + ratio)) * 0.5f;
-				}
-				
-				inputX -= (x * domainX);
-				inputY -= (y * domainY);
-			}
+			Accelerate(false);
 		}
 //		if (Input.GetKey(KeyCode.W) && inputY < 2)
 //			//inputY += .1f;
@@ -110,9 +29,68 @@ public class PlayerScript : MonoBehaviour {
 			inputRot += 1f;
 		if (Input.GetKey(KeyCode.D))
 			inputRot -= 1f;
+		if (Input.GetKey (KeyCode.Space)) {
+			Instantiate(bullet, transform.position, Quaternion.identity);
+		}
 		movement = new Vector2(
 			speed.x * inputX,
 			speed.y * inputY);
+	}
+
+	void Accelerate(bool choice) {
+		var tempRot = inputRot;
+		var multiplier = 1;
+		//Determine if W or S pressed. If S, flip rotation by 180 degrees so our math is opposite of W. 
+		//Value stored in temp variable to prevent the ship from just rotating 180 degrees like a derp.
+		if (!choice) {
+			multiplier = -1;
+			if (inputRot >= 180f)
+				tempRot -= 180f;
+			else
+				tempRot += 180f;
+		}
+		//Prevent divide by zero error when getting ratio of y/x from angle when the angle is 90 (tan(90) = UNDEFINED)
+		if (tempRot == 90f)
+			inputY += (.5f * multiplier);
+		else if(tempRot == 180f)
+			inputX -= (.5f * multiplier);
+		else if(tempRot == 0f || tempRot == 360f)
+			inputX += (.5f * multiplier);
+		
+		if (tempRot != 90f || tempRot != 180f || tempRot != 0f || tempRot != 360f) {
+			//Get ratio from angle after converting radians to degrees, absolute value to prevent negatives
+			var ratio = Mathf.Abs(Mathf.Tan(tempRot * Mathf.PI / 180f));
+			var y = 0f;
+			var x = 0f;
+			var domainX = 1;
+			var domainY = 1;
+			
+			//Domains accounted for, multipliers set for later on when we change inputX and inputY
+			//(-x,+y)|(+x,+y)
+			//-------|-------
+			//(-x,-y)|(+x,-y)
+			//
+			if (tempRot > 90f && tempRot < 180f) {
+				domainX = -1;
+			} else if (tempRot > 180f && tempRot < 270f) {
+				domainX = -1;
+				domainY = -1;
+			} else if (tempRot > 270f && tempRot < 360f) {
+				domainY = -1;
+			}
+			//If ratio of y/x is greater than 1, we have to use percentages to determine how we increment x and y
+			if (ratio > 1f) {
+				y = ratio / (ratio + 1f);
+				x = 1f / (ratio + 1f);
+			}
+			else {
+				x = (1f / (1f + ratio)) * 0.5f;
+				y = (ratio / (1f + ratio)) * 0.5f;
+			}
+			
+			inputX+= (x * domainX);
+			inputY += (y * domainY);
+		}
 	}
 
 	
