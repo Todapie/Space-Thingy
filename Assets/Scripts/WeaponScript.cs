@@ -21,7 +21,7 @@ public class WeaponScript : MonoBehaviour
 		}
 	}
 
-	public void Attack(bool isEnemy, float rotation, Vector2 direction)
+	public void Attack(bool isEnemy, float rotation)
 	{
 		if (CanAttack)
 		{
@@ -41,7 +41,6 @@ public class WeaponScript : MonoBehaviour
 			if (move != null)
 			{
 				move.rotation = rotation;
-				move.Direction = direction;
 			}
 		}
 	}

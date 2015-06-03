@@ -33,7 +33,7 @@ public class PlayerScript : MonoBehaviour {
 			WeaponScript weapon = GetComponent<WeaponScript>();
 			if (weapon != null)
 			{
-				weapon.Attack(false, inputRot, new Vector2(inputX, inputY));
+				weapon.Attack(false, inputRot);
 			}
 		}
 		movement = new Vector2(
