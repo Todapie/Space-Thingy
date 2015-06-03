@@ -6,7 +6,7 @@ public class PlayerScript : MonoBehaviour {
 	private Vector2 movement;
 	public float inputX = 0.0f;
 	public float inputY = 0.0f;
-
+	public float inputRot = 0.0f;
 	void Update() {
 		if (Input.GetKeyDown(KeyCode.W))
 			inputY += .5f;
@@ -16,23 +16,18 @@ public class PlayerScript : MonoBehaviour {
 			inputY -= .5f;
 		if (Input.GetKey(KeyCode.S) && inputY > -2)
 			inputY -= .1f;
-		if (Input.GetKeyDown(KeyCode.A))
-			inputX -= .5f;
-		if (Input.GetKey(KeyCode.A) && inputX > -2)
-			inputX -= .1f;
-		if (Input.GetKeyDown(KeyCode.D))
-			inputX += .5f;
-		if (Input.GetKey(KeyCode.D) && inputX < 2)
-			inputX += .1f;
-		
+		if (Input.GetKey(KeyCode.A))
+			inputRot += 1f;
 		movement = new Vector2(
 			speed.x * inputX,
 			speed.y * inputY);
 	}
+
 	
 	void FixedUpdate()
 	{
 		// 5 - Move the game object
 		GetComponent<Rigidbody2D>().velocity = movement;
+		GetComponent<Rigidbody2D> ().rotation = inputRot;
 	}
 }
