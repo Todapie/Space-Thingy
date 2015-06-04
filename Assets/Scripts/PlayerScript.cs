@@ -5,6 +5,7 @@ public class PlayerScript : MonoBehaviour {
 	public GameObject bullet;
 	public Vector2 speed = new Vector2(1, 1);
 	private Vector2 movement;
+	public PlayerScript script;
 	public float inputX = 0.0f;
 	public float inputY = 0.0f;
 	public float inputRot = 0.0f;
@@ -45,6 +46,8 @@ public class PlayerScript : MonoBehaviour {
 
 	void Start() {
 		//var player = Instantiate(Player) as Transform;
+		script = GetComponent <PlayerScript>();
+		script.enabled = false;
 		transform.localScale = new Vector3( 0.05f, 0.05f, 1.0f);
 	}
 
