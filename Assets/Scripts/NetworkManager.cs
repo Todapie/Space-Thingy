@@ -3,7 +3,7 @@ using System.Collections;
 
 public class NetworkManager : MonoBehaviour
 {
-	private const string typeName = "UniqueGameName";
+	private const string typeName = "Derp12345";
 	private const string gameName = "Tech Nasty";
 	private HostData[] hostList;
 
