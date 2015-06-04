@@ -91,14 +91,31 @@ public class PlayerScript : MonoBehaviour {
 				if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 1.9f) {
 					Accelerate (true);
 				}
+				else if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) >= 5f) {
+					inputX /= 1.1f;
+					inputY /= 1.1f;
+
+					Accelerate(true);
+				}
+				else{
+					inputX /= 1.01f;
+					inputY /= 1.01f;
+				}
 			}
 
 			if (Input.GetKey (KeyCode.S)) {
 				if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 1.9f) {
+					Accelerate (false);
+				}
+				else if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) >= 5f) {
 					inputX /= 1.1f;
 					inputY /= 1.1f;
-					//Debug.Log("hit");
-					Accelerate (false);
+					
+					Accelerate(false);
+				}
+				else{
+					inputX /= 1.01f;
+					inputY /= 1.01f;
 				}
 			}	
 			if (Input.GetKey (KeyCode.A))
@@ -117,8 +134,11 @@ public class PlayerScript : MonoBehaviour {
 		} else {
 			SyncedMovement();
 		}
-	}
 
+		inputX /= 1.005f;
+		inputY /= 1.005f;
+	}
+	
 	private void SyncedMovement()
 	{
 		syncTime += Time.deltaTime;
