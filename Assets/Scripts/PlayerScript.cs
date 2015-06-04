@@ -8,6 +8,13 @@ public class PlayerScript : MonoBehaviour {
 	public float inputX = 0.0f;
 	public float inputY = 0.0f;
 	public float inputRot = 0.0f;
+	public Transform Food;
+	//public Transform Player;
+	//public var player = Instantiate (Player) as Transform;
+	void Start() {
+		//var player = Instantiate(Player) as Transform;
+		transform.localScale = new Vector3( 0.05f, 0.05f, 1.0f);
+	}
 
 	void OnCollisionEnter2D (Collision2D other) {
 		if (other.collider.name.Contains ("vertical")) {
@@ -16,11 +23,20 @@ public class PlayerScript : MonoBehaviour {
 			else
 				inputX = -0.2f;
 		}
-		if (other.collider.name.Contains ("horizontal"))
-			if(inputY < 0)
+		if (other.collider.name.Contains ("horizontal")) {
+			if (inputY < 0)
 				inputY = 0.2f;
 			else
-			inputY = -0.2f;
+				inputY = -0.2f;
+		}
+		if (other.collider.name.Contains ("Food")) {
+			Destroy (other.gameObject);
+
+			Space s = gameObject.AddComponent<Space>();
+			s.food = Food;
+			//s.CreateFood();
+			transform.localScale = new Vector3( transform.localScale.x + 0.01f, transform.localScale.y + 0.01f, 1.1f);
+		}
 	}
 
 	void Update() {
@@ -32,14 +48,20 @@ public class PlayerScript : MonoBehaviour {
 			Accelerate(true);
 		}
 		if (Input.GetKeyDown (KeyCode.S)) {
-			Accelerate(false);
+
+			//inputX = 0f;
+			//inputY = 0f;
+
+			//Accelerate(false);
 		}
 //		if (Input.GetKey(KeyCode.W) && inputY < 2)
 //			//inputY += .1f;
 //		if (Input.GetKeyDown(KeyCode.S))
 //			inputY -= .5f;
-//		if (Input.GetKey(KeyCode.S) && inputY > -2)
-//			inputY -= .1f;
+		if (Input.GetKey (KeyCode.S)) {
+			inputY /= 1.08f;
+			inputX /= 1.08f;
+		}
 		if (Input.GetKey(KeyCode.A))
 			inputRot += 1f;
 		if (Input.GetKey(KeyCode.D))
