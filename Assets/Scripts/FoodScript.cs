@@ -12,12 +12,4 @@ public class FoodScript : MonoBehaviour {
 	void Update () {
 	
 	}
-
-	void OnCollisionEnter(Collision collision) {
-		Debug.Log("Hit");
-		if (collision.collider.name.Contains ("Food")) {
-
-			//Destroy (gameObject);
-		}
-	}
 }
