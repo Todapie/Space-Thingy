@@ -8,6 +8,21 @@ public class PlayerScript : MonoBehaviour {
 	public float inputX = 0.0f;
 	public float inputY = 0.0f;
 	public float inputRot = 0.0f;
+
+	void OnCollisionEnter2D (Collision2D other) {
+		if (other.collider.name.Contains ("vertical")) {
+			if(inputX < 0)
+				inputX = 0.2f;
+			else
+				inputX = -0.2f;
+		}
+		if (other.collider.name.Contains ("horizontal"))
+			if(inputY < 0)
+				inputY = 0.2f;
+			else
+			inputY = -0.2f;
+	}
+
 	void Update() {
 		if (inputRot < 0f)
 			inputRot += 360f;
@@ -47,21 +62,25 @@ public class PlayerScript : MonoBehaviour {
 		//Determine if W or S pressed. If S, flip rotation by 180 degrees so our math is opposite of W. 
 		//Value stored in temp variable to prevent the ship from just rotating 180 degrees like a derp.
 		if (!choice) {
+
 			multiplier = -1;
 			if (inputRot >= 180f)
 				tempRot -= 180f;
+			else if (inputRot == 0f)
+				tempRot = 0f;
 			else
 				tempRot += 180f;
 		}
 		//Prevent divide by zero error when getting ratio of y/x from angle when the angle is 90 (tan(90) = UNDEFINED)
 		if (tempRot == 90f)
 			inputY += (.5f * multiplier);
-		else if(tempRot == 180f)
+		else if (tempRot == 180f)
 			inputX -= (.5f * multiplier);
-		else if(tempRot == 0f || tempRot == 360f)
+		else if (tempRot == 0f || tempRot == 360f) {
 			inputX += (.5f * multiplier);
+		}
 		
-		if (tempRot != 90f || tempRot != 180f || tempRot != 0f || tempRot != 360f) {
+		if (tempRot != 90f && tempRot != 180f && tempRot != 0f && tempRot != 360f) {
 			//Get ratio from angle after converting radians to degrees, absolute value to prevent negatives
 			var ratio = Mathf.Abs(Mathf.Tan(tempRot * Mathf.PI / 180f));
 			var y = 0f;
