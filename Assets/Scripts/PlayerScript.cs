@@ -88,17 +88,19 @@ public class PlayerScript : MonoBehaviour {
 			if (inputRot > 360f)
 				inputRot -= 360f;
 			if (Input.GetKey (KeyCode.W)) {
-				//if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 2f) {
+				if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 1.9f) {
 					Accelerate (true);
-				//}
+				}
 			}
 
 			if (Input.GetKey (KeyCode.S)) {
-				//if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 2f) {
+				if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 1.9f) {
+					inputX /= 1.1f;
+					inputY /= 1.1f;
 					//Debug.Log("hit");
 					Accelerate (false);
-				//}
-			}
+				}
+			}	
 			if (Input.GetKey (KeyCode.A))
 				inputRot += 1.5f;
 			if (Input.GetKey (KeyCode.D))

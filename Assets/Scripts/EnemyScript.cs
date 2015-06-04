@@ -79,7 +79,7 @@ public class EnemyScript : MonoBehaviour {
 			Debug.Log("2");
 			inputRot = headingAngle;
 		}
-		else if (Mathf.Abs(headingAngle) != inputRot) {
+		else if (headingAngle != inputRot) {
 			Debug.Log("3");
 			if (inputRot < 0f)
 				inputRot += 360f;
