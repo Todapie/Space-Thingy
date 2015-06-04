@@ -44,8 +44,12 @@ public class NetworkManager : MonoBehaviour
 			{
 				for (int i = 0; i < hostList.Length; i++)
 				{
-					if (GUI.Button(new Rect(400, 100 + (110 * i), 300, 100), hostList[i].gameName))
+					if (GUI.Button(new Rect(400, 100 + (110 * i), 300, 100), hostList[i].gameName)) {
 						JoinServer(hostList[i]);
+					    foreach (var derp in hostList[i].ip) {
+							Debug.Log(derp);
+						}
+					}
 				}
 			}
 		}
@@ -64,6 +68,11 @@ public class NetworkManager : MonoBehaviour
 
 	public void JoinServer(HostData hostData)
 	{
-		Network.Connect(hostData);
+		try {
+
+			Network.Connect(hostData);
+		}catch (UnityException e){
+			Debug.Log (e);
+		}
 	}
 }

@@ -16,6 +16,10 @@ public class PlayerScript : MonoBehaviour {
 	private float syncTime = 0f;
 	private Vector3 syncStartPosition = Vector3.zero;
 	private Vector3 syncEndPosition = Vector3.zero;
+	[RPC]
+	void PrintText(string text) {
+		Debug.Log (text);
+	}
 
 	void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
 	{
@@ -73,34 +77,27 @@ public class PlayerScript : MonoBehaviour {
 
 	void Update() {
 
+		if (Input.GetKeyDown (KeyCode.H)) {
+			nv.RPC ("PrintText", RPCMode.All, "Hello world");
+		}
+
+
 		if (nv.isMine) {
 			if (inputRot < 0f)
 				inputRot += 360f;
 			if (inputRot > 360f)
 				inputRot -= 360f;
-			if (Input.GetKeyDown (KeyCode.W)) {
-				//Accelerate(true);
-			}
-			if (Input.GetKeyDown (KeyCode.S)) {
-
-				//inputX = 0f;
-				//inputY = 0f;
-
-				//Accelerate(false);
-			}
-			//		if (Input.GetKey(KeyCode.W) && inputY < 2)
-			//			//inputY += .1f;
-			//		if (Input.GetKeyDown(KeyCode.S))
-			//			inputY -= .5f;
 			if (Input.GetKey (KeyCode.W)) {
-				if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 2f) {
+				//if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 2f) {
 					Accelerate (true);
-				}
+				//}
 			}
 
 			if (Input.GetKey (KeyCode.S)) {
-				inputY /= 1.08f;
-				inputX /= 1.08f;
+				//if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 2f) {
+					//Debug.Log("hit");
+					Accelerate (false);
+				//}
 			}
 			if (Input.GetKey (KeyCode.A))
 				inputRot += 1.5f;
@@ -180,9 +177,8 @@ public class PlayerScript : MonoBehaviour {
 				x = (1f / (1f + ratio)) * 0.5f;
 				y = (ratio / (1f + ratio)) * 0.5f;
 			}
-			
-			inputX+= (x * domainX);
-			inputY += (y * domainY);
+				inputX+= (x * 0.08f * domainX);
+				inputY += (y * 0.08f * domainY);
 		}
 	}
 
