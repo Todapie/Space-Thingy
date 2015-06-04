@@ -14,11 +14,11 @@ public class MoveScript : MonoBehaviour {
 		var multiplier = 1;
 
 		if (tempRot == 90f)
-			Direction.y += (.5f * multiplier);
+			Direction.y += (multiplier);
 		else if(tempRot == 180f)
-			Direction.x -= (.5f * multiplier);
+			Direction.x -= (multiplier);
 		else if(tempRot == 0f || tempRot == 360f)
-			Direction.x += (.5f * multiplier);
+			Direction.x += (multiplier);
 		
 		if (tempRot != 90f || tempRot != 180f || tempRot != 0f || tempRot != 360f) {
 			//Get ratio from angle after converting radians to degrees, absolute value to prevent negatives
@@ -47,8 +47,8 @@ public class MoveScript : MonoBehaviour {
 				x = 1f / (ratio + 1f);
 			}
 			else {
-				x = (1f / (1f + ratio)) * 0.5f;
-				y = (ratio / (1f + ratio)) * 0.5f;
+				x = (1f / (1f + ratio));
+				y = (ratio / (1f + ratio));
 			}
 			
 			Direction.x += (x * domainX);
@@ -66,6 +66,6 @@ public class MoveScript : MonoBehaviour {
 	void FixedUpdate()
 	{
 		// 5 - Move the game object
-		GetComponent<Rigidbody2D>().velocity = movement;
+		GetComponent<Rigidbody2D>().velocity = movement * 5f;
 	}
 }
