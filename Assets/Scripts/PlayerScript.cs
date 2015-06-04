@@ -9,6 +9,7 @@ public class PlayerScript : MonoBehaviour {
 	public float inputY = 0.0f;
 	public float inputRot = 0.0f;
 	public Transform Food;
+	public NetworkView nv;
 	//public Transform Player;
 	//public var player = Instantiate (Player) as Transform;
 	void Start() {
@@ -40,42 +41,52 @@ public class PlayerScript : MonoBehaviour {
 	}
 
 	void Update() {
-		if (inputRot < 0f)
-			inputRot += 360f;
-		if (inputRot > 360f)
-			inputRot -= 360f;
-		if (Input.GetKeyDown (KeyCode.W)) {
-			Accelerate(true);
-		}
-		if (Input.GetKeyDown (KeyCode.S)) {
 
-			//inputX = 0f;
-			//inputY = 0f;
-
-			//Accelerate(false);
-		}
-//		if (Input.GetKey(KeyCode.W) && inputY < 2)
-//			//inputY += .1f;
-//		if (Input.GetKeyDown(KeyCode.S))
-//			inputY -= .5f;
-		if (Input.GetKey (KeyCode.S)) {
-			inputY /= 1.08f;
-			inputX /= 1.08f;
-		}
-		if (Input.GetKey(KeyCode.A))
-			inputRot += 1f;
-		if (Input.GetKey(KeyCode.D))
-			inputRot -= 1f;
-		if (Input.GetKey(KeyCode.Space)) {
-			WeaponScript weapon = GetComponent<WeaponScript>();
-			if (weapon != null)
-			{
-				weapon.Attack(false, inputRot);
+		if (nv.isMine) {
+			if (inputRot < 0f)
+				inputRot += 360f;
+			if (inputRot > 360f)
+				inputRot -= 360f;
+			if (Input.GetKeyDown (KeyCode.W)) {
+				//Accelerate(true);
 			}
+			if (Input.GetKeyDown (KeyCode.S)) {
+
+				//inputX = 0f;
+				//inputY = 0f;
+
+				//Accelerate(false);
+			}
+	//		if (Input.GetKey(KeyCode.W) && inputY < 2)
+	//			//inputY += .1f;
+	//		if (Input.GetKeyDown(KeyCode.S))
+	//			inputY -= .5f;
+			if (Input.GetKey(KeyCode.W)) {
+				if (Mathf.Sqrt((inputX*inputX) + (inputY * inputY)) <= 2f) {
+					Debug.Log("Hit");
+					Accelerate(true);
+				}
+			}
+
+			if (Input.GetKey (KeyCode.S)) {
+				inputY /= 1.08f;
+				inputX /= 1.08f;
+			}
+			if (Input.GetKey(KeyCode.A))
+				inputRot += 1.5f;
+			if (Input.GetKey(KeyCode.D))
+				inputRot -= 1.5f;
+			if (Input.GetKey(KeyCode.Space)) {
+				WeaponScript weapon = GetComponent<WeaponScript>();
+				if (weapon != null)
+				{
+					weapon.Attack(false, inputRot);
+				}
+			}
+			movement = new Vector2(
+				speed.x * inputX,
+				speed.y * inputY);
 		}
-		movement = new Vector2(
-			speed.x * inputX,
-			speed.y * inputY);
 	}
 
 	void Accelerate(bool choice) {
