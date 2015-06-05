@@ -8,8 +8,14 @@ public class Space : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		var foodTransform = Instantiate(food) as Transform;
-		foodTransform.position = new Vector3 (Random.Range (-8, 8), Random.Range (-5, 5), 5);
+		if (GameObject.FindGameObjectsWithTag ("Food").Length == 0) {
+			for (int i = 0; i < 20; i++)
+			{
+				var foodTransform = Instantiate(food) as Transform;
+				foodTransform.position = new Vector3 (Random.Range (-8, 8), Random.Range (-5, 5), 5);
+			}
+		}
+
 	}
 
 	public void CreateFood() 

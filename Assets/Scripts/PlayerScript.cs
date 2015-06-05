@@ -73,6 +73,7 @@ public class PlayerScript : MonoBehaviour {
 			Destroy (other.gameObject);
 			Space s = gameObject.AddComponent<Space>();
 			s.food = Food;
+			s.CreateFood();
 			transform.localScale = new Vector3( transform.localScale.x + 0.01f, transform.localScale.y + 0.01f, 1.1f);
 		}
 	}
