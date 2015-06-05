@@ -8,6 +8,8 @@ public class MoveScript : MonoBehaviour
 	public float rotation;
 	private Vector2 movement;
 	
+	//public Rigidbody2D rb;
+	
 	// Update is called once per frame
 	void Start () 
 	{
@@ -71,5 +73,13 @@ public class MoveScript : MonoBehaviour
 	{
 		// 5 - Move the game object
 		GetComponent<Rigidbody2D>().velocity = movement * 5f;
+	}
+
+	void OnCollisionEnter2D (Collision2D other) 
+	{
+		if (other.collider.name.Contains ("vertical") || other.collider.name.Contains ("horizontal")) 
+		{
+			Destroy (gameObject );
+		}
 	}
 }
