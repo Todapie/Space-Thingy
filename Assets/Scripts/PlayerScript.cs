@@ -81,15 +81,13 @@ public class PlayerScript : MonoBehaviour {
 	{
 		//Players half life ~ 190s or 3 minutes 10 seconds.
 		if (transform.localScale.y > 0.05f)
-			transform.localScale = new Vector3( transform.localScale.x - 0.000001f, transform.localScale.y - 0.000001f, 1.1f);
+			transform.localScale = new Vector3 (transform.localScale.x - 0.000001f, transform.localScale.y - 0.000001f, 1.1f);
 
-		if (Input.GetKeyDown (KeyCode.H)) 
-		{
+		if (Input.GetKeyDown (KeyCode.H)) {
 			nv.RPC ("PrintText", RPCMode.All, "Hello world");
 		}
 
-		if (nv.isMine) 
-		{
+		if (nv.isMine) {
 			if (inputRot < 0f)
 				inputRot += 360f;
 			if (inputRot > 360f)
@@ -97,34 +95,26 @@ public class PlayerScript : MonoBehaviour {
 			if (Input.GetKey (KeyCode.W)) {
 				if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 1.9f) {
 					Accelerate (true);
-				}
-				else if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) >= 5f) {
+				} else if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) >= 5f) {
 					inputX /= 1.1f;
 					inputY /= 1.1f;
 
-					Accelerate(true);
-				}
-				else{
+					Accelerate (true);
+				} else {
 					inputX /= 1.01f;
 					inputY /= 1.01f;
 				}
 			}
 
-			if (Input.GetKey (KeyCode.S)) 
-			{
-				if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 1.9f) 
-				{
+			if (Input.GetKey (KeyCode.S)) {
+				if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 1.9f) {
 					Accelerate (false);
-				}
-				else if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) >= 5f) 
-				{
+				} else if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) >= 5f) {
 					inputX /= 1.1f;
 					inputY /= 1.1f;
 					
-					Accelerate(false);
-				}
-				else
-				{
+					Accelerate (false);
+				} else {
 					inputX /= 1.01f;
 					inputY /= 1.01f;
 				}
@@ -133,36 +123,32 @@ public class PlayerScript : MonoBehaviour {
 				inputRot += 1.5f;
 			if (Input.GetKey (KeyCode.D))
 				inputRot -= 1.5f;
-			if (Input.GetKey (KeyCode.Space)) 
-			{
+			if (Input.GetKey (KeyCode.Space)) {
 				WeaponScript weapon = GetComponent<WeaponScript> ();
-				if (weapon != null) 
-				{
+				if (weapon != null) {
 					weapon.Attack (false, inputRot, transform.localScale.x);
 				}
 			}
 			movement = new Vector2 (
 				speed.x * inputX,
 				speed.y * inputY);
-		} else 
-		{
-			SyncedMovement();
+		} else {
+			SyncedMovement ();
 		}
 			
 			
 		if (Mathf.Abs (inputX) < 0.005f) {
 			inputX = 0f;
 			movement.x = 0f;
-		}
-		else
+		} else
 			inputX /= 1.005f;
 		if (Mathf.Abs (inputY) < 0.005f)
-			inputY = 0f;
-		else 
 		{
-			inputY /= 1.005f;
+			inputY = 0f;
 			movement.y = 0f;
 		}
+		else 
+			inputY /= 1.005f;
 	}
 	
 	private void SyncedMovement()
