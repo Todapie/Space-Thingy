@@ -40,7 +40,7 @@ public class EnemyScript : MonoBehaviour {
 
 		Debug.Log (heading.x + " " + heading.y);
 
-		float d = Mathf.Abs( Mathf.Sqrt(heading.x + heading.y ) );
+		//float d = Mathf.Abs( Mathf.Sqrt(heading.x + heading.y ) );
 		float angleInRadian = Mathf.Atan2(heading.x, heading.y); //angle in radian
 		headingAngle = angleInRadian * 180 / Mathf.PI;
 
