@@ -125,7 +125,7 @@ public class PlayerScript : MonoBehaviour {
 			if (Input.GetKey (KeyCode.Space)) {
 				WeaponScript weapon = GetComponent<WeaponScript> ();
 				if (weapon != null) {
-					weapon.Attack (false, inputRot);
+					weapon.Attack (false, inputRot, transform.localScale.x);
 				}
 			}
 			movement = new Vector2 (

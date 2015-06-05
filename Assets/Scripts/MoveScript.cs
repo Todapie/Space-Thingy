@@ -15,12 +15,14 @@ public class MoveScript : MonoBehaviour {
 
 		if (tempRot == 90f)
 			Direction.y += (multiplier);
+		if (tempRot == 270f)
+			Direction.y -= (multiplier);
 		else if(tempRot == 180f)
 			Direction.x -= (multiplier);
 		else if(tempRot == 0f || tempRot == 360f)
 			Direction.x += (multiplier);
 		
-		if (tempRot != 90f || tempRot != 180f || tempRot != 0f || tempRot != 360f) {
+		if (tempRot != 90f && tempRot != 180f && tempRot != 0f && tempRot != 360f && tempRot != 270f) {
 			//Get ratio from angle after converting radians to degrees, absolute value to prevent negatives
 			var ratio = Mathf.Abs(Mathf.Tan(tempRot * Mathf.PI / 180f));
 			var y = 0f;

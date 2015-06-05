@@ -21,12 +21,11 @@ public class WeaponScript : MonoBehaviour
 		}
 	}
 
-	public void Attack(bool isEnemy, float rotation)
+	public void Attack(bool isEnemy, float rotation, float size)
 	{
 		if (CanAttack)
 		{
 			shootCooldown = shootingRate;
-
 			var shotTransform = Instantiate(Bullet) as Transform;
 			var x = 0f;
 			var y = 0f;
@@ -41,7 +40,7 @@ public class WeaponScript : MonoBehaviour
 			} else if (rotation > 270f && rotation < 360f) {
 				domainY = -1;
 			}
-			
+			float sizeMultiplier = size / 0.05f;
 			var ratio = Mathf.Abs(Mathf.Tan(rotation * Mathf.PI / 180f));
 
 			if (ratio > 1f) {
@@ -53,11 +52,11 @@ public class WeaponScript : MonoBehaviour
 				y = (ratio / (1f + ratio));
 			}
 
-			x = x * Mathf.Sqrt (0.11f) * domainX;
-			y = y * Mathf.Sqrt (0.11f) * domainY;
+			x = x * Mathf.Sqrt (0.15f) * domainX;
+			y = y * Mathf.Sqrt (0.15f) * domainY;
 
-			float sumX = transform.position.x + x;
-			float sumY = transform.position.y + y;
+			float sumX = transform.position.x + (x * sizeMultiplier);
+			float sumY = transform.position.y + (y * sizeMultiplier);
 
 			Vector3 offset = new Vector3(sumX, sumY, transform.position.z);
 			shotTransform.position = offset;
