@@ -68,7 +68,7 @@ public class PlayerScript : MonoBehaviour {
 			else
 				inputY = -0.2f;
 		}
-		if (other.collider.name.Contains ("Food")) 
+		if (other.collider.name.Contains ("Food") && transform.localScale.y <= 0.5f) 
 		{
 			Destroy (other.gameObject);
 			Space s = gameObject.AddComponent<Space>();
@@ -79,6 +79,10 @@ public class PlayerScript : MonoBehaviour {
 
 	void Update() 
 	{
+		//Players half life ~ 190s or 3 minutes 10 seconds.
+		if (transform.localScale.y > 0.05f)
+			transform.localScale = new Vector3( transform.localScale.x - 0.000001f, transform.localScale.y - 0.000001f, 1.1f);
+
 		if (Input.GetKeyDown (KeyCode.H)) 
 		{
 			nv.RPC ("PrintText", RPCMode.All, "Hello world");
