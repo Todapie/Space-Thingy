@@ -148,9 +148,21 @@ public class PlayerScript : MonoBehaviour {
 		{
 			SyncedMovement();
 		}
-
-		inputX /= 1.005f;
-		inputY /= 1.005f;
+			
+			
+		if (Mathf.Abs (inputX) < 0.005f) {
+			inputX = 0f;
+			movement.x = 0f;
+		}
+		else
+			inputX /= 1.005f;
+		if (Mathf.Abs (inputY) < 0.005f)
+			inputY = 0f;
+		else 
+		{
+			inputY /= 1.005f;
+			movement.y = 0f;
+		}
 	}
 	
 	private void SyncedMovement()
