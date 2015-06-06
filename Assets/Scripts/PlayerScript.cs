@@ -9,8 +9,6 @@ public class PlayerScript : MonoBehaviour {
 	public float inputX = 0.0f;
 	public float inputY = 0.0f;
 	public float inputRot = 0.0f;
-	public SpriteRenderer PlayerSprite;
-	public SpriteRenderer FoodSprite;
 	public Rigidbody2D rb;
 	public Transform Food;
 	public NetworkView nv;
