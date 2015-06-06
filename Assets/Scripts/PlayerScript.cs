@@ -3,11 +3,14 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
 	public GameObject bullet;
+
 	public Vector2 speed = new Vector2(1, 1);
 	private Vector2 movement;
 	public float inputX = 0.0f;
 	public float inputY = 0.0f;
 	public float inputRot = 0.0f;
+	public SpriteRenderer PlayerSprite;
+	public SpriteRenderer FoodSprite;
 	public Rigidbody2D rb;
 	public Transform Food;
 	public NetworkView nv;
@@ -53,6 +56,17 @@ public class PlayerScript : MonoBehaviour {
 		transform.localScale = new Vector3( 0.05f, 0.05f, 1.0f);
 	}
 
+	void OnTriggerEnter2D(Collider2D other){
+		if (other.name.Contains ("Food") && transform.localScale.y <= 0.5f) 
+		{
+			Destroy (other.gameObject);
+			Space s = gameObject.AddComponent<Space>();
+			s.food = Food;
+			s.CreateFood();
+			transform.localScale = new Vector3( transform.localScale.x + 0.01f, transform.localScale.y + 0.01f, 1.1f);
+		}
+	}
+
 	void OnCollisionEnter2D (Collision2D other) {
 		if (other.collider.name.Contains ("vertical")) 
 		{
@@ -68,14 +82,14 @@ public class PlayerScript : MonoBehaviour {
 			else
 				inputY = -0.2f;
 		}
-		if (other.collider.name.Contains ("Food") && transform.localScale.y <= 0.5f) 
-		{
-			Destroy (other.gameObject);
-			Space s = gameObject.AddComponent<Space>();
-			s.food = Food;
-			s.CreateFood();
-			transform.localScale = new Vector3( transform.localScale.x + 0.01f, transform.localScale.y + 0.01f, 1.1f);
-		}
+
+	}
+
+	void OnGUI()
+	{
+		Debug.Log (transform.position.x);
+		GUI.Label(new Rect(transform.position.x,transform.position.y, 100, 50), "Size: " + Mathf.RoundToInt((transform.localScale.x - 0.05f) / 0.01f));
+
 	}
 
 	void Update() 
