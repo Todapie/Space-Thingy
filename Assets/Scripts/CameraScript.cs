@@ -17,9 +17,24 @@ public class CameraScript : MonoBehaviour
 		if (GameObject.FindGameObjectsWithTag ("Player").Length > 0) {
 			Player = GameObject.FindGameObjectsWithTag ("Player") [0];
 			if (Player != null) {
-				Camera.main.transform.position = new Vector3 (Player.transform.position.x, Player.transform.position.y, -10);
-			
-				Camera.main.orthographicSize = Player.transform.localScale.x * 50;
+				float playerScale = Player.transform.localScale.x;
+				float playerX = Player.transform.position.x;
+				float playerY = Player.transform.position.y;
+				float cameraX = playerX;
+				float cameraY = playerY;
+
+				if(playerX > -6.5 || playerX < 6.5){
+					cameraX = playerX;
+				}
+				if(playerY > -4.5 || playerY < 4.5){
+					cameraY = playerY;
+				}
+
+				Camera.main.transform.position = new Vector3 (cameraX, cameraY, -10);
+
+				if(playerScale < .1) {
+					Camera.main.orthographicSize = playerScale * 30;
+				}
 			}
 		}
 	}

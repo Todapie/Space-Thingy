@@ -12,7 +12,7 @@ public class Space : MonoBehaviour
 			for (int i = 0; i < 20; i++)
 			{
 				var foodTransform = Instantiate(food) as Transform;
-				foodTransform.position = new Vector3 (Random.Range (-8, 8), Random.Range (-5, 5), 5);
+				foodTransform.position = new Vector3 (Random.Range (-7, 7), Random.Range (-4, 4), 5);
 			}
 		}
 
