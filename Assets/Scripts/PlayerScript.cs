@@ -5,6 +5,7 @@ public class PlayerScript : MonoBehaviour {
 	public GameObject bullet;
 
 	public Vector2 speed = new Vector2(1, 1);
+	public int size;
 	private Vector2 movement;
 	public float inputX = 0.0f;
 	public float inputY = 0.0f;
@@ -17,6 +18,7 @@ public class PlayerScript : MonoBehaviour {
 	private float syncTime = 0f;
 	private Vector3 syncStartPosition = Vector3.zero;
 	private Vector3 syncEndPosition = Vector3.zero;
+	private float ScaleThresholdCounter;
 	[RPC]
 	void PrintText(string text) {
 		Debug.Log (text);
@@ -50,13 +52,14 @@ public class PlayerScript : MonoBehaviour {
 
 	void Start() 
 	{
-		//var player = Instantiate(Player) as Transform;
 		transform.localScale = new Vector3( 0.05f, 0.05f, 1.0f);
+		ScaleThresholdCounter = 0f;
 	}
 
 	void OnTriggerEnter2D(Collider2D other){
 		if (other.name.Contains ("Food") && transform.localScale.y <= 0.5f) 
 		{
+			size++;
 			Destroy (other.gameObject);
 			Space s = gameObject.AddComponent<Space>();
 			s.food = Food;
@@ -85,16 +88,25 @@ public class PlayerScript : MonoBehaviour {
 
 	void OnGUI()
 	{
-		Debug.Log (transform.position.x);
-		GUI.Label(new Rect(transform.position.x,transform.position.y, 100, 50), "Size: " + Mathf.RoundToInt((transform.localScale.x - 0.05f) / 0.01f));
-
+		Vector3 tmpPos = Camera.main.WorldToScreenPoint (transform.position);
+		GUI.Label(new Rect(tmpPos.x,tmpPos.y, 100, 75), size.ToString());
 	}
 
 	void Update() 
 	{
-		//Players half life ~ 190s or 3 minutes 10 seconds.
-		if (transform.localScale.y > 0.05f)
-			transform.localScale = new Vector3 (transform.localScale.x - 0.000001f, transform.localScale.y - 0.000001f, 1.1f);
+
+		ScaleThresholdCounter += 0.000003f;
+		//Should be around 1 minute for your size to decrease
+
+		if (ScaleThresholdCounter >= 0.01f) 
+		{
+			ScaleThresholdCounter = 0f;
+			if (size > 1) 
+			{
+				transform.localScale = new Vector3 (transform.localScale.x - 0.01f, transform.localScale.y - 0.01f, 1.1f);
+				size -= 1;
+			}
+		}
 
 		if (Input.GetKeyDown (KeyCode.H)) {
 			nv.RPC ("PrintText", RPCMode.All, "Hello world");
