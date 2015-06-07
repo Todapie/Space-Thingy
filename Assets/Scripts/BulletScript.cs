@@ -2,7 +2,7 @@
 
 public class BulletScript : MonoBehaviour
 {
-	public int damage = 1;
+	public int damage;
 
 	public bool isEnemyShot = false;
 	

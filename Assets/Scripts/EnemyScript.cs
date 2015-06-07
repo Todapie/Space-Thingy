@@ -2,8 +2,9 @@
 using System.Collections;
 
 public class EnemyScript : MonoBehaviour {
-	public GameObject bullet;
+	public BulletScript bullet;
 	public Vector2 speed = new Vector2(1, 1);
+	public int size;
 	private Vector2 movement;
 	public float inputX = 0.0f;
 	public float inputY = 0.0f;
@@ -11,40 +12,60 @@ public class EnemyScript : MonoBehaviour {
 	private Vector3 origin = new Vector3 (0f, 0f, 0f);
 	private Vector3 heading;
 	private float headingAngle;
+	private float ScaleThresholdCounter;
+	public Transform Food;
 	//public Transform Player;
 	//public var player = Instantiate (Player) as Transform;
-	void Start() {
-		//var player = Instantiate(Player) as Transform;
-		transform.localScale = new Vector3( 0.05f, 0.05f, 1.0f);
-
+	void Start() 
+	{
+		transform.localScale = new Vector3( 0.08f, 0.08f, 1.0f);
+		size = Mathf.RoundToInt((transform.localScale.x - 0.05f) / (0.01f));
+		ScaleThresholdCounter = 0f;
 	}
 
-	void findFood(){
+	void OnCollisionEnter2D(Collision2D other){
+		if (other.gameObject.name.Contains ("Bullet") && transform.localScale.y > 0.05f) 
+		{
+			size--;
+			Destroy (other.gameObject);
+			Space s = gameObject.AddComponent<Space>();
+			s.food = Food;
 
+			s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
+			transform.localScale = new Vector3( transform.localScale.x - (0.01f * bullet.damage), transform.localScale.y - (0.01f * bullet.damage), 1.1f);
+		}
+
+		if (size < 1)
+			Destroy (transform.gameObject);
+	}
+
+	void findFood() 
+	{
 		float nearestFood = 9999999;
 		Transform nearestFoodT = null;
 
-		foreach(var obj in GameObject.FindGameObjectsWithTag("Food")) {
-
-			Debug.Log("HIT");
+		foreach(var obj in GameObject.FindGameObjectsWithTag("Food")) 
+		{
+			//Debug.Log("HIT");
 
 			var objectPos = obj.transform.position;
 			var distanceSqr = (objectPos - transform.position).sqrMagnitude;
 			
-			if (distanceSqr < nearestFood) {
+			if (distanceSqr < nearestFood) 
+			{
 				nearestFoodT = obj.transform;
 				nearestFood = distanceSqr;
 			}
 		}
 		heading = nearestFoodT.position - transform.position;
 
-		Debug.Log (heading.x + " " + heading.y);
+		//Debug.Log (heading.x + " " + heading.y);
 
 		//float d = Mathf.Abs( Mathf.Sqrt(heading.x + heading.y ) );
 		float angleInRadian = Mathf.Atan2(heading.x, heading.y); //angle in radian
 		headingAngle = angleInRadian * 180 / Mathf.PI;
 
-		Debug.Log (headingAngle);
+		//Debug.Log (headingAngle);
 	}
 	
 //	void OnCollisionEnter2D (Collision2D other) {
@@ -71,16 +92,30 @@ public class EnemyScript : MonoBehaviour {
 //	}
 //	
 	void Update() {
-		Debug.Log ("update");
+
+		ScaleThresholdCounter += 0.000003f;
+		//Should be around 1 minute for your size to decrease
+		
+		if (ScaleThresholdCounter >= 0.01f) 
+		{
+			ScaleThresholdCounter = 0f;
+			if (size > 1) 
+			{
+				transform.localScale = new Vector3 (transform.localScale.x - 0.01f, transform.localScale.y - 0.01f, 1.1f);
+				size -= 1;
+			}
+		}
+
+		//Debug.Log ("update");
 		if (heading == origin) {
-			Debug.Log("1");
+			//Debug.Log("1");
 			findFood ();
 		} else if (headingAngle - inputRot >= -1 && headingAngle - inputRot <= 1) {
-			Debug.Log("2");
+			//Debug.Log("2");
 			inputRot = headingAngle;
 		}
 		else if (headingAngle != inputRot) {
-			Debug.Log("3");
+			//Debug.Log("3");
 			if (inputRot < 0f)
 				inputRot += 360f;
 			if (inputRot > 360f)
@@ -91,9 +126,9 @@ public class EnemyScript : MonoBehaviour {
 				inputRot += 1f;
 			}
 		} else {
-			Debug.Log("BLARR");
+			//Debug.Log("BLARR");
 			if (Mathf.Sqrt((inputX*inputX) + (inputY * inputY)) <= 2f) {
-				Debug.Log("Hit");
+				//Debug.Log("Hit");
 				Accelerate(true);
 			}
 
