@@ -21,7 +21,7 @@ public class WeaponScript : MonoBehaviour
 		}
 	}
 
-	public void Attack(bool isEnemy, float rotation, float size)
+	public void Attack(bool isEnemy, float rotation, float size, int mass, int playerID, int damage)
 	{
 		if (CanAttack)
 		{
@@ -31,6 +31,9 @@ public class WeaponScript : MonoBehaviour
 			shotTransform.position = BulletPositioning(rotation, size);
 
 			BulletScript shot = shotTransform.gameObject.GetComponent<BulletScript>();
+			shot.damage = damage;
+			shot.mass = mass;
+			shot.PlayerID = playerID;
 			if (shot != null)
 			{
 				shot.isEnemyShot = isEnemy;

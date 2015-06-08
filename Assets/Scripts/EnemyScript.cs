@@ -18,25 +18,28 @@ public class EnemyScript : MonoBehaviour {
 	//public var player = Instantiate (Player) as Transform;
 	void Start() 
 	{
-		transform.localScale = new Vector3( 0.08f, 0.08f, 1.0f);
 		size = Mathf.RoundToInt((transform.localScale.x - 0.05f) / (0.01f));
 		ScaleThresholdCounter = 0f;
 	}
 
-	void OnCollisionEnter2D(Collision2D other){
+	void OnCollisionEnter2D(Collision2D other)
+	{
 		if (other.gameObject.name.Contains ("Bullet") && transform.localScale.y > 0.05f) 
 		{
-			size--;
+			bullet = other.gameObject.GetComponent<BulletScript>();
+
 			Destroy (other.gameObject);
 			Space s = gameObject.AddComponent<Space>();
 			s.food = Food;
-
-			s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
+			s.DisperseFood(transform.position.x, transform.position.y, bullet.damage, size);
+			size-= bullet.damage;
 			transform.localScale = new Vector3( transform.localScale.x - (0.01f * bullet.damage), transform.localScale.y - (0.01f * bullet.damage), 1.1f);
 		}
 
-		if (size < 1)
+		if (size < 1) 
+		{
 			Destroy (transform.gameObject);
+		}
 	}
 
 	void findFood() 
