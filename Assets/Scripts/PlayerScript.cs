@@ -12,7 +12,8 @@ public class PlayerScript : MonoBehaviour {
 	public float inputRot = 0.0f;
 	public Rigidbody2D rb;
 	public Transform Food;
-	public NetworkView nv;
+	public string Name;
+	//public NetworkView nv;
 	private float lastSynchronizationTime = 0f;
 	private float syncDelay = 0f;
 	private float syncTime = 0f;
@@ -99,7 +100,8 @@ public class PlayerScript : MonoBehaviour {
 	void OnGUI()
 	{
 		Vector3 tmpPos = Camera.main.WorldToScreenPoint (transform.position);
-		GUI.Label(new Rect(tmpPos.x,tmpPos.y, 100, 75), size.ToString());
+		GUI.Label(new Rect(tmpPos.x,tmpPos.y, 100, 75), Name);
+		GUI.Label(new Rect(0, 0, 100, 75), size.ToString());
 	}
 
 	void Shrink()
@@ -195,13 +197,13 @@ public class PlayerScript : MonoBehaviour {
 	{
 		Shrink ();
 
-		if (Input.GetKeyDown (KeyCode.H)) 
-		{
-			nv.RPC ("PrintText", RPCMode.All, "Hello world");
-		}
+		//if (Input.GetKeyDown (KeyCode.H)) 
+		//{
+		//	nv.RPC ("PrintText", RPCMode.All, "Hello world");
+		//}
 
-		if (nv.isMine) 
-		{
+		//if (nv.isMine) 
+		//{
 			if (inputRot < 0f)
 				inputRot += 360f;
 			if (inputRot > 360f)
@@ -217,11 +219,11 @@ public class PlayerScript : MonoBehaviour {
 				inputRot -= 1.5f;
 
 			movement = new Vector2 (speed.x * inputX, speed.y * inputY);
-		} 
-		else 
-		{
-			SyncedMovement();
-		}
+		//}
+		//else 
+		//{
+		//	SyncedMovement();
+		//}
 			
 		Deaccelerate();
 	}
