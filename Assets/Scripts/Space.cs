@@ -4,6 +4,7 @@ using System.Collections;
 public class Space : MonoBehaviour 
 {
 	public Transform food;
+	public bool collison = false;
 
 	// Use this for initialization
 	void Start () 
@@ -12,8 +13,9 @@ public class Space : MonoBehaviour
 			for (int i = 0; i < 20; i++)
 			{
 				var foodTransform = Instantiate(food) as Transform;
-				foodTransform.position = new Vector3 (Random.Range (-7, 7), Random.Range (-4, 4), 5);
+				foodTransform.position = new Vector3 (Random.Range (-7, 7), Random.Range (-4, 4), 5f);
 				FoodScript f = foodTransform.GetComponent<FoodScript>();
+				f.rotation = Random.Range(1, 360);
 				f.mass = 1;
 			}
 		}
@@ -22,8 +24,9 @@ public class Space : MonoBehaviour
 	public void CreateFood() 
 	{
 		var foodTransform = Instantiate(food) as Transform;
-		foodTransform.position = new Vector3 (Random.Range (-8, 8), Random.Range (-5, 5), 5);
+		foodTransform.position = new Vector3 (Random.Range (-8, 8), Random.Range (-5, 5), 5f);
 		FoodScript f = foodTransform.GetComponent<FoodScript>();
+		f.rotation = Random.Range(1, 360);
 		f.mass = 1;
 	}
 	
