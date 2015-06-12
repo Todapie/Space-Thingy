@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 using System.Collections;
 
 public class NetworkManager : MonoBehaviour
@@ -76,4 +76,4 @@ public class NetworkManager : MonoBehaviour
 			Debug.Log (e);
 		}
 	}
-}
+}*/

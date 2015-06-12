@@ -1,11 +1,10 @@
-﻿/*using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
-public class NewBehaviourScript : MonoBehaviour {
+public class PhotonManagerScript : MonoBehaviour {
 	const string VERSION = "v0.1";
 	public string roomName = "Test Room";
-	public string playerPrefabname = "player";
-	public Transform spawnPoint;
+	public string playerPrefab = "Player";
 
 	// Use this for initialization
 	void Start () 
@@ -19,7 +18,6 @@ public class NewBehaviourScript : MonoBehaviour {
 	}
 	void OnJoinedRoom()
 	{
-		PhotonNetwork.Instantiate (playerPrefabname, spawnPoint.position, spawnPoint.rotation, 0);
+		PhotonNetwork.Instantiate (playerPrefab, new Vector3(Random.Range(-7f, 7f), Random.Range(-5f, 5f), 0f), Quaternion.identity, 0);
 	}
 }
-*/
