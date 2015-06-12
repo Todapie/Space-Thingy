@@ -3,12 +3,12 @@ using System.Collections;
 
 public class FoodScript : MonoBehaviour 
 {
-	public Vector2 speed = new Vector2(10f, 10f);
+	public Vector2 speed =  new Vector2 (0f, 0f);
 	public Vector2 Direction = new Vector2(0f, 0f);
-	public float rotation;
+	public float rotation = 0f;
 	public Transform food;
-	public int mass;
-	private Vector2 movement;
+	public int mass = 1;
+	private Vector2 movement = new Vector2(0f, 0f);
 	
 
 	void Start () 
@@ -70,7 +70,14 @@ public class FoodScript : MonoBehaviour
 		movement = new Vector2(
 			speed.x * Direction.x,
 			speed.y * Direction.y);
-
+	
+		if(float.IsNaN(speed.x) || float.IsNaN(speed.y) || float.IsNaN(Direction.x) || float.IsNaN(Direction.y))
+		{ 
+			speed.x = 0f; speed.y = 0f; Direction.x = 0f; Direction.y = 0f; 
+			movement = new Vector2(
+				speed.x * Direction.x,
+				speed.y * Direction.y);
+		}
 		GetComponent<Rigidbody2D>().velocity = movement;
 	}
 	
@@ -93,49 +100,53 @@ public class FoodScript : MonoBehaviour
 
 				if (Background != null)
 				{
-
 					Space s = Background.transform.GetComponent<Space>();
 
 					if(!s.collison)
 					{
-
 						var foodTransform = Instantiate(food) as Transform;
-						foodTransform.position = transform.position;
 						FoodScript f = foodTransform.GetComponent<FoodScript>();
 						FoodScript f2 = other.gameObject.GetComponent<FoodScript>();
-						f.mass = mass + (int)(other.gameObject.transform.localScale.x / 0.02f);
+
+						if (mass >= f2.mass)
+							foodTransform.position = transform.position;
+						else if( mass < f2.mass)
+							foodTransform.position = f2.transform.position;
+
 						var massOfThisObject = mass;
-
-						var massOfCollider = (int)(other.gameObject.transform.localScale.x / 0.02f);
-
-						Vector2 velocityOfThisObject = Direction;
 						
-						Vector2 velocityOfCollider = f2.Direction;
+						var massOfCollider = f2.mass;
+						f.mass = massOfThisObject + massOfCollider;
 
-						float VX = ((massOfThisObject * velocityOfThisObject.x) + (massOfCollider * velocityOfCollider.x) / (massOfCollider + massOfThisObject));
-						float VY = ((massOfThisObject * velocityOfThisObject.y) + (massOfCollider * velocityOfCollider.y) / (massOfCollider + massOfThisObject));
+
+						Vector2 velocityOfThisObject = movement;
+						
+						Vector2 velocityOfCollider = f2.movement;
+
+						float VX = ((massOfThisObject * velocityOfThisObject.x) + (massOfCollider * velocityOfCollider.x)) / (massOfCollider + massOfThisObject);
+						float VY = ((massOfThisObject * velocityOfThisObject.y) + (massOfCollider * velocityOfCollider.y)) / (massOfCollider + massOfThisObject);
 
 						Vector2 resultant = new Vector2(VX,VY);
-
 						float theta = Mathf.Atan(VY/VX) * (180f / Mathf.PI);
-						float domainX = 0f;
-						float domainY = 0f;
+						f.rotation = theta;
+//						float domainX = 1f;
+//						float domainY = 1f;
 
-						if (theta > 90f && theta < 180f) 
-						{
-							domainX = -1;
-						} 
-						else if (theta > 180f && theta < 270f) 
-						{
-							domainX = -1;
-							domainY = -1;
-						} 
-						else if (theta > 270f && theta < 360f) 
-						{
-							domainY = -1;
-						}
+//						if (theta > 90f && theta < 180f) 
+//						{
+//							domainX = -1;
+//						} 
+//						else if (theta > 180f && theta < 270f) 
+//						{
+//							domainX = -1;
+//							domainY = -1;
+//						} 
+//						else if (theta > 270f && theta < 360f) 
+//						{
+//							domainY = -1;
+//						}
 
-						theta = Mathf.Tan(theta);
+						theta = Mathf.Abs(Mathf.Tan(theta));
 						
 						float ratioY = 1;
 						float ratioX = 1;
@@ -152,19 +163,15 @@ public class FoodScript : MonoBehaviour
 						}
 
 						f.speed = resultant;
-						Debug.Log ("SPEED: " + f.speed);
-
-
 						f.Direction.x = ratioX;
 						f.Direction.y = ratioY;
-						Debug.Log ("DIRECTION: " + f.Direction);
-						//f.movement = newSpeed;
-						foodTransform.localScale = new Vector3 (f.mass * 0.02f, f.mass * 0.02f, 1f);
+
+						f.transform.localScale = new Vector3 (f.mass * 0.02f, f.mass * 0.02f, 1f);
 
 						s.collison = true;
+						f.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
 
 						Destroy(gameObject);
-
 					}
 					else
 					{

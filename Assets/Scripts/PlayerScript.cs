@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerScript : MonoBehaviour {
+public class PlayerScript : MonoBehaviour 
+{
 	public GameObject bullet;
-
 	public Vector2 speed = new Vector2(0, 0);
 	public int size;
 	private Vector2 movement;
@@ -13,7 +13,6 @@ public class PlayerScript : MonoBehaviour {
 	public Rigidbody2D rb;
 	public Transform Food;
 	public string Name;
-	//public NetworkView nv;
 	private float lastSynchronizationTime = 0f;
 	private float syncDelay = 0f;
 	private float syncTime = 0f;
@@ -23,10 +22,6 @@ public class PlayerScript : MonoBehaviour {
 	private bool Accelerating = false;
 	private int PlayerID;
 	public int Damage;
-	[RPC]
-	void PrintText(string text) {
-		Debug.Log (text);
-	}
 
 	void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
 	{
@@ -65,16 +60,14 @@ public class PlayerScript : MonoBehaviour {
 	{
 		if (other.name.Contains ("Food") && transform.localScale.y <= 0.5f) 
 		{
-			Debug.Log("hit");
 			FoodScript f = other.GetComponent<FoodScript>();
 
 			size += f.mass;
-			FoodScript obj = other.gameObject.GetComponent<FoodScript>();
 			Destroy (other.gameObject);
 			Space s = gameObject.AddComponent<Space>();
 			s.food = Food;
 			s.CreateFood();
-			transform.localScale = new Vector3( transform.localScale.x + 0.01f, transform.localScale.y + 0.01f, 1.1f);
+			transform.localScale = new Vector3( transform.localScale.x + (0.01f * f.mass), transform.localScale.y + (0.01f * f.mass), 1.1f);
 		}
 	}
 
@@ -196,35 +189,21 @@ public class PlayerScript : MonoBehaviour {
 	void Update() 
 	{
 		Shrink ();
+		if (inputRot < 0f)
+			inputRot += 360f;
+		if (inputRot > 360f)
+			inputRot -= 360f;
 
-		//if (Input.GetKeyDown (KeyCode.H)) 
-		//{
-		//	nv.RPC ("PrintText", RPCMode.All, "Hello world");
-		//}
+		WKey();
+		SKey();
+		SpaceKey();
 
-		//if (nv.isMine) 
-		//{
-			if (inputRot < 0f)
-				inputRot += 360f;
-			if (inputRot > 360f)
-				inputRot -= 360f;
+		if (Input.GetKey (KeyCode.A))
+			inputRot += 1.5f;
+		if (Input.GetKey (KeyCode.D))
+			inputRot -= 1.5f;
 
-			WKey();
-			SKey();
-			SpaceKey();
-
-			if (Input.GetKey (KeyCode.A))
-				inputRot += 1.5f;
-			if (Input.GetKey (KeyCode.D))
-				inputRot -= 1.5f;
-
-			movement = new Vector2 (speed.x * inputX, speed.y * inputY);
-		//}
-		//else 
-		//{
-		//	SyncedMovement();
-		//}
-			
+		movement = new Vector2 (speed.x * inputX, speed.y * inputY);			
 		Deaccelerate();
 	}
 	

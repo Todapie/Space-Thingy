@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyScript : MonoBehaviour {
+public class EnemyScript : MonoBehaviour 
+{
 	public BulletScript bullet;
 	public Vector2 speed = new Vector2(1, 1);
 	public int size;
@@ -14,8 +15,7 @@ public class EnemyScript : MonoBehaviour {
 	private float headingAngle;
 	private float ScaleThresholdCounter;
 	public Transform Food;
-	//public Transform Player;
-	//public var player = Instantiate (Player) as Transform;
+
 	void Start() 
 	{
 		size = Mathf.RoundToInt((transform.localScale.x - 0.05f) / (0.01f));
@@ -24,22 +24,26 @@ public class EnemyScript : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D other)
 	{
-		if (other.gameObject.name.Contains ("Bullet") && transform.localScale.y > 0.05f) 
+		if (other.gameObject.name.Contains ("Bullet")) 
 		{
 			bullet = other.gameObject.GetComponent<BulletScript>();
 
 			Destroy (other.gameObject);
 			Space s = gameObject.AddComponent<Space>();
 			s.food = Food;
-			s.DisperseFood(transform.position.x, transform.position.y, bullet.damage, size);
-			size-= bullet.damage;
-			transform.localScale = new Vector3( transform.localScale.x - (0.01f * bullet.damage), transform.localScale.y - (0.01f * bullet.damage), 1.1f);
+			if (size-bullet.damage > 0) 
+			{
+				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
+				transform.localScale = new Vector3( transform.localScale.x - (0.01f * bullet.damage), transform.localScale.y - (0.01f * bullet.damage), 1.1f);
+			}
+			else 
+			{
+				s.DisperseFood(transform.position.x, transform.position.y, size);
+				Destroy (transform.gameObject);
+			}
 		}
 
-		if (size < 1) 
-		{
-			Destroy (transform.gameObject);
-		}
+
 	}
 
 	void findFood() 

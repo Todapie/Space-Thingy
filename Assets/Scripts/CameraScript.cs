@@ -8,17 +8,7 @@ public class CameraScript : MonoBehaviour
 	private float playerY;
 	private float cameraX;
 	private float cameraY;
-	
-	// Use this for initialization
-	void Start () 
-	{
-		playerX = Player.transform.position.x;
-		playerY = Player.transform.position.y;
-		cameraX = playerX;
-		cameraY = playerY;
-	}
-	
-	// Update is called once per frame
+
 	void Update () 
 	{
 		if (GameObject.FindGameObjectsWithTag ("Player").Length > 0) 
