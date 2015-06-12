@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿/*using UnityEngine;
 using System.Collections;
 
 public class MainMenuScript : MonoBehaviour {
@@ -14,7 +14,7 @@ public class MainMenuScript : MonoBehaviour {
 	
 	}
 
-	private void SpawnPlayer(string name)
+	/*private void SpawnPlayer(string name)
 	{
 		var player = Instantiate (playerPrefab);
 		player.transform.position = new Vector3(Random.Range(-7f, 7f), Random.Range(-5f, 5f), 0f);
@@ -35,3 +35,4 @@ public class MainMenuScript : MonoBehaviour {
 		}
 	}
 }
+*/

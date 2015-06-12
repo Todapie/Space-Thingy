@@ -97,12 +97,12 @@ public class PlayerScript : MonoBehaviour {
 
 	}
 
-	void OnGUI()
+	/*void OnGUI()
 	{
 		Vector3 tmpPos = Camera.main.WorldToScreenPoint (transform.position);
 		GUI.Label(new Rect(tmpPos.x,tmpPos.y, 100, 75), Name);
 		GUI.Label(new Rect(0, 0, 100, 75), size.ToString());
-	}
+	}*/
 
 	void Shrink()
 	{
