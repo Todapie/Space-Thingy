@@ -102,9 +102,63 @@ public class FoodScript : MonoBehaviour
 						var foodTransform = Instantiate(food) as Transform;
 						foodTransform.position = transform.position;
 						FoodScript f = foodTransform.GetComponent<FoodScript>();
-						f.Direction = Direction;
+						FoodScript f2 = other.gameObject.GetComponent<FoodScript>();
 						f.mass = mass + (int)(other.gameObject.transform.localScale.x / 0.02f);
-						f.speed = speed;
+						var massOfThisObject = mass;
+
+						var massOfCollider = (int)(other.gameObject.transform.localScale.x / 0.02f);
+
+						Vector2 velocityOfThisObject = Direction;
+						
+						Vector2 velocityOfCollider = f2.Direction;
+
+						float VX = ((massOfThisObject * velocityOfThisObject.x) + (massOfCollider * velocityOfCollider.x) / (massOfCollider + massOfThisObject));
+						float VY = ((massOfThisObject * velocityOfThisObject.y) + (massOfCollider * velocityOfCollider.y) / (massOfCollider + massOfThisObject));
+
+						Vector2 resultant = new Vector2(VX,VY);
+
+						float theta = Mathf.Atan(VY/VX) * (180f / Mathf.PI);
+						float domainX = 0f;
+						float domainY = 0f;
+
+						if (theta > 90f && theta < 180f) 
+						{
+							domainX = -1;
+						} 
+						else if (theta > 180f && theta < 270f) 
+						{
+							domainX = -1;
+							domainY = -1;
+						} 
+						else if (theta > 270f && theta < 360f) 
+						{
+							domainY = -1;
+						}
+
+						theta = Mathf.Tan(theta);
+						
+						float ratioY = 1;
+						float ratioX = 1;
+						
+						if (theta > 1f) 
+						{
+							ratioY = theta / (theta + 1f);
+							ratioX = 1f / (theta + 1f);
+						}
+						else 
+						{
+							ratioX = (1f / (1f + theta));
+							ratioY = (theta / (1f + theta));
+						}
+
+						f.speed = resultant;
+						Debug.Log ("SPEED: " + f.speed);
+
+
+						f.Direction.x = ratioX;
+						f.Direction.y = ratioY;
+						Debug.Log ("DIRECTION: " + f.Direction);
+						//f.movement = newSpeed;
 						foodTransform.localScale = new Vector3 (f.mass * 0.02f, f.mass * 0.02f, 1f);
 
 						s.collison = true;

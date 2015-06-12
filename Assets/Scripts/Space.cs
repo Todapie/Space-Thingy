@@ -10,7 +10,7 @@ public class Space : MonoBehaviour
 	void Start () 
 	{
 		if (GameObject.FindGameObjectsWithTag ("Food").Length == 0) {
-			for (int i = 0; i < 20; i++)
+			for (int i = 0; i < 5; i++)
 			{
 				var foodTransform = Instantiate(food) as Transform;
 				foodTransform.position = new Vector3 (Random.Range (-7, 7), Random.Range (-4, 4), 5f);

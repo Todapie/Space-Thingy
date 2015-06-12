@@ -112,7 +112,7 @@ public class EnemyScript : MonoBehaviour {
 		//Debug.Log ("update");
 		if (heading == origin) {
 			//Debug.Log("1");
-			findFood ();
+			//findFood ();
 		} else if (headingAngle - inputRot >= -1 && headingAngle - inputRot <= 1) {
 			//Debug.Log("2");
 			inputRot = headingAngle;
