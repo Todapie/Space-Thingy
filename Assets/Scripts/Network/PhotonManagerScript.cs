@@ -12,7 +12,7 @@ public class PhotonManagerScript : MonoBehaviour {
 		PhotonNetwork.ConnectUsingSettings (VERSION);
 	}
 	void OnJoinedLobby()
-	{
+	{	
 		RoomOptions roomOptions = new RoomOptions() { isVisible = false, maxPlayers = 4 };
 		PhotonNetwork.JoinOrCreateRoom(roomName, roomOptions, TypedLobby.Default);
 	}
