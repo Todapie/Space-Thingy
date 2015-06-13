@@ -58,16 +58,18 @@ public class PlayerScript : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.name.Contains ("Food") && transform.localScale.y <= 0.5f) 
+		if (other.name.Contains ("Food")) 
 		{
 			FoodScript f = other.GetComponent<FoodScript>();
-
-			size += f.mass;
+			if (size + f.mass > 50)
+				size = 50;
+			else
+				size += f.mass;
 			Destroy (other.gameObject);
 			Space s = gameObject.AddComponent<Space>();
 			s.food = Food;
 			s.CreateFood();
-			transform.localScale = new Vector3( transform.localScale.x + (0.01f * f.mass), transform.localScale.y + (0.01f * f.mass), 1.1f);
+			transform.localScale = new Vector3( 0.05f + (0.01f * size), 0.05f + (0.01f * size), 1.1f);
 		}
 	}
 
@@ -220,8 +222,7 @@ public class PlayerScript : MonoBehaviour
 		var multiplier = 1;
 		//Determine if W or S pressed. If S, flip rotation by 180 degrees so our math is opposite of W. 
 		//Value stored in temp variable to prevent the ship from just rotating 180 degrees like a derp.
-		if (!choice) 
-		{
+		if (!choice) {
 			multiplier = -1;
 			if (inputRot >= 180f)
 				tempRot -= 180f;
@@ -231,16 +232,20 @@ public class PlayerScript : MonoBehaviour
 				tempRot += 180f;
 		}
 		//Prevent divide by zero error when getting ratio of y/x from angle when the angle is 90 (tan(90) = UNDEFINED)
-		if (tempRot == 90f)
-			inputY += (.5f * multiplier);
+		if (inputRot == 270f)
+			inputY -= (.08f * multiplier);
+		else if(inputRot == 90f)
+			inputY += (.08f * multiplier);
 		else if (tempRot == 180f)
-			inputX -= (.5f * multiplier);
-		else if (tempRot == 0f || tempRot == 360f) 
-		{
-			inputX += (.5f * multiplier);
-		}
-		
-		if (tempRot != 90f && tempRot != 180f && tempRot != 0f && tempRot != 360f) 
+			inputX -= (.08f * multiplier);
+		else if (tempRot == 360f) 
+			inputX += (.08f * multiplier);
+		else if (tempRot == 0f && inputRot == 180f)
+			inputX -= (.08f * multiplier);
+		else if (tempRot == 0f && inputRot == 0f)
+			inputX += (.08f * multiplier);
+
+		if (tempRot != 90f && tempRot != 180f && tempRot != 0f && tempRot != 360f && tempRot != 270f) 
 		{
 			//Get ratio from angle after converting radians to degrees, absolute value to prevent negatives
 			var ratio = Mathf.Abs(Mathf.Tan(tempRot * Mathf.PI / 180f));

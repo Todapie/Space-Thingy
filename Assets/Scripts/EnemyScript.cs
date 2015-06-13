@@ -34,6 +34,7 @@ public class EnemyScript : MonoBehaviour
 			if (size-bullet.damage > 0) 
 			{
 				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
+				size -= bullet.damage;
 				transform.localScale = new Vector3( transform.localScale.x - (0.01f * bullet.damage), transform.localScale.y - (0.01f * bullet.damage), 1.1f);
 			}
 			else 
@@ -42,8 +43,6 @@ public class EnemyScript : MonoBehaviour
 				Destroy (transform.gameObject);
 			}
 		}
-
-
 	}
 
 	void findFood() 

@@ -129,22 +129,6 @@ public class FoodScript : MonoBehaviour
 						Vector2 resultant = new Vector2(VX,VY);
 						float theta = Mathf.Atan(VY/VX) * (180f / Mathf.PI);
 						f.rotation = theta;
-//						float domainX = 1f;
-//						float domainY = 1f;
-
-//						if (theta > 90f && theta < 180f) 
-//						{
-//							domainX = -1;
-//						} 
-//						else if (theta > 180f && theta < 270f) 
-//						{
-//							domainX = -1;
-//							domainY = -1;
-//						} 
-//						else if (theta > 270f && theta < 360f) 
-//						{
-//							domainY = -1;
-//						}
 
 						theta = Mathf.Abs(Mathf.Tan(theta));
 						

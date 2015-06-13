@@ -34,6 +34,10 @@ public class WeaponScript : MonoBehaviour
 			shot.damage = damage;
 			shot.mass = mass;
 			shot.PlayerID = playerID;
+
+			shot.transform.localScale *= (damage / 5f);
+			if (shot.transform.localScale.x <= 0.01f)
+				shot.transform.localScale = new Vector3(0.01f,0.01f ,1f);
 			if (shot != null)
 			{
 				shot.isEnemyShot = isEnemy;

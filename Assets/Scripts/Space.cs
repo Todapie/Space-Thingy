@@ -11,10 +11,10 @@ public class Space : MonoBehaviour
 	{
 		if (GameObject.FindGameObjectsWithTag ("Food").Length == 0) 
 		{
-			for (int i = 0; i < 20; i++)
+			for (int i = 0; i < 100; i++)
 			{
 				var foodTransform = Instantiate(food) as Transform;
-				foodTransform.position = new Vector3 (Random.Range (-7, 7), Random.Range (-4, 4), 5f);
+				foodTransform.position = new Vector3 (Random.Range (-16, 16), Random.Range (-14, 14), 5f);
 				FoodScript f = foodTransform.GetComponent<FoodScript>();
 				f.rotation = Random.Range(1, 360);
 				f.speed = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
@@ -23,12 +23,13 @@ public class Space : MonoBehaviour
 		}
 	}
 
-	public void CreateFood() 
+	public void CreateFood()
 	{
 		var foodTransform = Instantiate(food) as Transform;
-		foodTransform.position = new Vector3 (Random.Range (-8, 8), Random.Range (-5, 5), 5f);
+		foodTransform.position = new Vector3 (Random.Range (-16, 16), Random.Range (-14, 14), 5f);
 		FoodScript f = foodTransform.GetComponent<FoodScript>();
 		f.rotation = Random.Range(1, 360);
+		f.speed = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
 		f.mass = 1;
 	}
 	

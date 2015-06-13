@@ -20,21 +20,21 @@ public class CameraScript : MonoBehaviour
 				playerX = Player.transform.position.x;
 				playerY = Player.transform.position.y;
 
-				if(playerX > -5 && playerX < 5)
+				if(playerX > -18 && playerX < 18)
 				{
 					cameraX = playerX;
 				}
-				if(playerY > -4.5 && playerY < 4.5)
+				if(playerY > -16.5 && playerY < 16.5)
 				{
 					cameraY = playerY;
 				}
 
 				Camera.main.transform.position = new Vector3 (cameraX, cameraY, -10);
 
-				if(playerScale < .1) 
-				{
+				//if(playerScale < .1) 
+				//{
 					Camera.main.orthographicSize = playerScale * 30;
-				}
+				//}
 			}
 		}
 	}
