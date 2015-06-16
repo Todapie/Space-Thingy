@@ -9,6 +9,7 @@ public class FoodScript : MonoBehaviour
 	public Transform food;
 	public int mass = 1;
 	private Vector2 movement = new Vector2(0f, 0f);
+	public BulletScript bullet;
 	
 
 	void Start () 
@@ -87,9 +88,33 @@ public class FoodScript : MonoBehaviour
 		{
 			Direction.x = Direction.x * -1;
 		}
+
 		if (other.name.Contains ("horizontal")) 
 		{
 			Direction.y = Direction.y * -1;
+		}
+
+		if (other.gameObject.name.Contains ("Bullet")) 
+		{
+			bullet = other.gameObject.GetComponent<BulletScript>();
+			
+			Destroy (other.gameObject);
+
+			Space s = gameObject.AddComponent<Space>();
+
+			s.food = food;
+
+			if (mass-bullet.damage > 0) 
+			{
+				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
+				mass -= bullet.damage;
+				transform.localScale = new Vector3( transform.localScale.x - (0.01f * bullet.damage), transform.localScale.y - (0.01f * bullet.damage), 1.1f);
+			}
+			else 
+			{
+				s.DisperseFood(transform.position.x, transform.position.y, mass);
+				Destroy (transform.gameObject);
+			}
 		}
 
 		if (other.name.Contains ("Food")) 
