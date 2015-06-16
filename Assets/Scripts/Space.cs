@@ -29,7 +29,7 @@ public class Space : MonoBehaviour
 		foodTransform.position = new Vector3 (Random.Range (-16, 16), Random.Range (-14, 14), 5f);
 		FoodScript f = foodTransform.GetComponent<FoodScript>();
 		f.rotation = Random.Range(1, 360);
-		f.speed = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
+		f.speed = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.8f, 0.8f));
 		f.mass = 1;
 	}
 	
@@ -40,7 +40,7 @@ public class Space : MonoBehaviour
 			float scale = 0.02f;
 			var fs = Instantiate (food) as Transform;
 			FoodScript f = fs.GetComponent<FoodScript>();
-			f.speed = new Vector2(0,0);
+			f.speed = new Vector2(Random.Range(-0.1f, 0.1f),Random.Range(-0.1f, 0.1f));
 			f.mass = 1;
 			f.rotation = Random.Range(1, 360);
 			float X = x / 1.05f;

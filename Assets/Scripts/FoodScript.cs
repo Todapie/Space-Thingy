@@ -104,6 +104,9 @@ public class FoodScript : MonoBehaviour
 
 			s.food = food;
 
+			if (mass == 1)
+				return;
+
 			if (mass-bullet.damage > 0) 
 			{
 				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
