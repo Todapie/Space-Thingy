@@ -43,10 +43,10 @@ public class Space : MonoBehaviour
 			f.speed = new Vector2(0,0);
 			f.mass = 1;
 			f.rotation = Random.Range(1, 360);
-			float X = x / 1.01f;
-			float X2 = x * 1.01f;
-			float Y = y / 1.01f;
-			float Y2 = y * 1.01f;
+			float X = x / 1.05f;
+			float X2 = x * 1.05f;
+			float Y = y / 1.05f;
+			float Y2 = y * 1.05f;
 			fs.transform.position = new Vector3 (Random.Range (X, X2), Random.Range (Y, Y2), 5);
 			fs.transform.localScale = new Vector3 (scale, scale, 5);
 		}

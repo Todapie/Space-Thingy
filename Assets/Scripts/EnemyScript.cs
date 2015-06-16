@@ -18,13 +18,13 @@ public class EnemyScript : MonoBehaviour
 
 	void Start() 
 	{
-		size = Mathf.RoundToInt((transform.localScale.x - 0.05f) / (0.01f));
+		size = Mathf.RoundToInt((transform.localScale.x - 0.05f) / (0.005f));
 		ScaleThresholdCounter = 0f;
 	}
 
-	void OnCollisionEnter2D(Collision2D other)
+	void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.gameObject.name.Contains ("Bullet")) 
+		if (other.name.Contains ("Bullet")) 
 		{
 			bullet = other.gameObject.GetComponent<BulletScript>();
 
@@ -35,7 +35,7 @@ public class EnemyScript : MonoBehaviour
 			{
 				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
 				size -= bullet.damage;
-				transform.localScale = new Vector3( transform.localScale.x - (0.01f * bullet.damage), transform.localScale.y - (0.01f * bullet.damage), 1.1f);
+				transform.localScale = new Vector3( transform.localScale.x - (0.005f * bullet.damage), transform.localScale.y - (0.005f * bullet.damage), 1.1f);
 			}
 			else 
 			{
@@ -43,6 +43,12 @@ public class EnemyScript : MonoBehaviour
 				Destroy (transform.gameObject);
 			}
 		}
+	}
+
+	void OnGUI() 
+	{
+		Vector3 tmpPos = Camera.main.WorldToScreenPoint (transform.position);
+		GUI.Label(new Rect(tmpPos.x,tmpPos.y, 100, 75), size.ToString());
 	}
 
 	void findFood() 
@@ -102,12 +108,12 @@ public class EnemyScript : MonoBehaviour
 		ScaleThresholdCounter += 0.000003f;
 		//Should be around 1 minute for your size to decrease
 		
-		if (ScaleThresholdCounter >= 0.01f) 
+		if (ScaleThresholdCounter >= 0.005f) 
 		{
 			ScaleThresholdCounter = 0f;
 			if (size > 1) 
 			{
-				transform.localScale = new Vector3 (transform.localScale.x - 0.01f, transform.localScale.y - 0.01f, 1.1f);
+				transform.localScale = new Vector3 (transform.localScale.x - 0.005f, transform.localScale.y - 0.005f, 1.1f);
 				size -= 1;
 			}
 		}

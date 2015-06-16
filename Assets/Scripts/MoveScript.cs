@@ -75,9 +75,9 @@ public class MoveScript : MonoBehaviour
 		GetComponent<Rigidbody2D>().velocity = movement * 5f;
 	}
 
-	void OnCollisionEnter2D (Collision2D other) 
+	void OnTriggerEnter2D (Collider2D other) 
 	{
-		if (other.collider.name.Contains ("vertical") || other.collider.name.Contains ("horizontal")) 
+		if (other.name.Contains ("vertical") || other.name.Contains ("horizontal")) 
 		{
 			Destroy (gameObject );
 		}

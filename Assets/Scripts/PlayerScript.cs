@@ -4,6 +4,7 @@ using System.Collections;
 public class PlayerScript : MonoBehaviour 
 {
 	public GameObject bullet;
+	public BulletScript bulletScript;
 	public Vector2 speed = new Vector2(0, 0);
 	public int size;
 	private Vector2 movement;
@@ -22,6 +23,7 @@ public class PlayerScript : MonoBehaviour
 	private bool Accelerating = false;
 	private int PlayerID;
 	public int Damage;
+	public ParticleSystem particles;
 
 	void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
 	{
@@ -51,13 +53,37 @@ public class PlayerScript : MonoBehaviour
 
 	void Start() 
 	{
-		transform.localScale = new Vector3( 0.05f, 0.05f, 1.0f);
+		transform.localScale = new Vector3( 0.05f, 0.05f, 0f);
 		size = 1;
 		ScaleThresholdCounter = 0f;
+		particles = Instantiate(particles) as ParticleSystem;
+		particles.transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
+		particles.transform.Rotate(0, transform.rotation.z, 0);
 	}
 
 	void OnTriggerEnter2D(Collider2D other)
 	{
+		if (other.name.Contains ("Bullet")) 
+		{
+			BulletScript bulletScript = other.gameObject.GetComponent<BulletScript>();
+			if (bulletScript.PlayerID != PlayerID) 
+			{				
+				Destroy (other.gameObject);
+				Space s = gameObject.AddComponent<Space>();
+				s.food = Food;
+				if (size-bulletScript.damage > 0) 
+				{
+					s.DisperseFood(transform.position.x, transform.position.y, bulletScript.damage);
+					size -= bulletScript.damage;
+					transform.localScale = new Vector3( transform.localScale.x - (0.005f * bulletScript.damage), transform.localScale.y - (0.005f * bulletScript.damage), 1.1f);
+				}
+				else 
+				{
+					s.DisperseFood(transform.position.x, transform.position.y, size);
+					Destroy (transform.gameObject);
+				}
+			}
+		}
 		if (other.name.Contains ("Food")) 
 		{
 			FoodScript f = other.GetComponent<FoodScript>();
@@ -69,7 +95,7 @@ public class PlayerScript : MonoBehaviour
 			Space s = gameObject.AddComponent<Space>();
 			s.food = Food;
 			s.CreateFood();
-			transform.localScale = new Vector3( 0.05f + (0.01f * size), 0.05f + (0.01f * size), 1.1f);
+			transform.localScale = new Vector3( 0.05f + (0.005f * size), 0.05f + (0.005f * size), 1.1f);
 		}
 	}
 
@@ -166,7 +192,7 @@ public class PlayerScript : MonoBehaviour
 			var damage = size;
 			WeaponScript weapon = GetComponent<WeaponScript> ();
 			if (weapon != null)
-				weapon.Attack (false, inputRot, transform.localScale.x, size, PlayerID, damage);
+				weapon.Attack (false, inputRot, transform.localScale.x, size, PlayerID, damage, transform.position);
 		}
 	}
 
@@ -190,6 +216,10 @@ public class PlayerScript : MonoBehaviour
 
 	void Update() 
 	{
+		
+		particles.transform.position = transform.position;
+		particles.transform.Rotate(0, transform.rotation.z, 0);
+
 		Shrink ();
 		if (inputRot < 0f)
 			inputRot += 360f;
