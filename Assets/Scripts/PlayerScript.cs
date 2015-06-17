@@ -216,7 +216,7 @@ public class PlayerScript : MonoBehaviour
 
 	void Update() 
 	{
-		particles.transform.position = transform.position;
+		particles.transform.position = new Vector3(transform.position.x, transform.position.y, 2f);
 		particles.transform.Rotate(0, transform.rotation.z, 0);
 
 		Shrink ();
