@@ -98,7 +98,7 @@ public class FoodScript : MonoBehaviour
 		{
 			bullet = other.gameObject.GetComponent<BulletScript>();
 			var bulletMove = other.gameObject.GetComponent<MoveScript>();
-			Debug.Log (bullet.damage + " | " + mass);
+
 			if (mass == 1)
 				bulletMove.speed /= 2.5f;
 			else
