@@ -57,7 +57,7 @@ public class PlayerScript : MonoBehaviour
 		size = 1;
 		ScaleThresholdCounter = 0f;
 		particles = Instantiate(particles) as ParticleSystem;
-		particles.transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
+		particles.transform.position = new Vector3(transform.position.x, transform.position.y, 2f);
 		particles.transform.Rotate(0, transform.rotation.z, 0);
 	}
 
@@ -135,7 +135,7 @@ public class PlayerScript : MonoBehaviour
 			ScaleThresholdCounter = 0f;
 			if (size > 1) 
 			{
-				transform.localScale = new Vector3 (transform.localScale.x - 0.01f, transform.localScale.y - 0.01f, 1.1f);
+				transform.localScale = new Vector3 (transform.localScale.x - 0.005f, transform.localScale.y - 0.005f, 1.1f);
 				size -= 1;
 			}
 		}
@@ -216,7 +216,6 @@ public class PlayerScript : MonoBehaviour
 
 	void Update() 
 	{
-		
 		particles.transform.position = transform.position;
 		particles.transform.Rotate(0, transform.rotation.z, 0);
 
@@ -231,9 +230,9 @@ public class PlayerScript : MonoBehaviour
 		SpaceKey();
 
 		if (Input.GetKey (KeyCode.A))
-			inputRot += 1.5f;
+			inputRot += 2f;
 		if (Input.GetKey (KeyCode.D))
-			inputRot -= 1.5f;
+			inputRot -= 2f;
 
 		movement = new Vector2 (speed.x * inputX, speed.y * inputY);			
 		Deaccelerate();

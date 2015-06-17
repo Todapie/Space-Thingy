@@ -7,10 +7,7 @@ public class MoveScript : MonoBehaviour
 	public Vector2 Direction = new Vector2(0f, 0f);
 	public float rotation;
 	private Vector2 movement;
-	
-	//public Rigidbody2D rb;
-	
-	// Update is called once per frame
+
 	void Start () 
 	{
 		var tempRot = rotation;
@@ -56,10 +53,14 @@ public class MoveScript : MonoBehaviour
 				x = (1f / (1f + ratio));
 				y = (ratio / (1f + ratio));
 			}
+
+			transform.Rotate(transform.rotation.x, transform.rotation.y, rotation);
 			
 			Direction.x += (x * domainX);
 			Direction.y += (y * domainY);
 		}
+		else
+			transform.Rotate(transform.rotation.x, transform.rotation.y, tempRot);
 	}
 
 	void Update()
@@ -80,6 +81,12 @@ public class MoveScript : MonoBehaviour
 		if (other.name.Contains ("vertical") || other.name.Contains ("horizontal")) 
 		{
 			Destroy (gameObject );
+		}
+
+		if (other.name.Contains ("Bullet")) 
+		{
+			Destroy (gameObject );
+			Destroy(other.gameObject);
 		}
 	}
 }

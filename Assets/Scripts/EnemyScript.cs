@@ -47,7 +47,7 @@ public class EnemyScript : MonoBehaviour
 
 	void OnGUI() 
 	{
-		Vector3 tmpPos = Camera.main.WorldToScreenPoint (transform.position);
+		Vector3 tmpPos = Camera.main.WorldToViewportPoint (transform.position);
 		GUI.Label(new Rect(tmpPos.x,tmpPos.y, 100, 75), size.ToString());
 	}
 
@@ -121,7 +121,7 @@ public class EnemyScript : MonoBehaviour
 		//Debug.Log ("update");
 		if (heading == origin) {
 			//Debug.Log("1");
-			//findFood ();
+			findFood ();
 		} else if (headingAngle - inputRot >= -1 && headingAngle - inputRot <= 1) {
 			//Debug.Log("2");
 			inputRot = headingAngle;
