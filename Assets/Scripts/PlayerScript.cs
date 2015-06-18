@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerScript : MonoBehaviour 
+public class PlayerScript : Photon.MonoBehaviour 
 {
 	public GameObject bullet;
 	public BulletScript bulletScript;
@@ -224,17 +224,20 @@ public class PlayerScript : MonoBehaviour
 			inputRot += 360f;
 		if (inputRot > 360f)
 			inputRot -= 360f;
+		if (photonView.isMine) 
+		{
+			WKey();
+			SKey();
+			SpaceKey();
 
-		WKey();
-		SKey();
-		SpaceKey();
+			if (Input.GetKey (KeyCode.A))
+				inputRot += 2f;
+			if (Input.GetKey (KeyCode.D))
+				inputRot -= 2f;
 
-		if (Input.GetKey (KeyCode.A))
-			inputRot += 2f;
-		if (Input.GetKey (KeyCode.D))
-			inputRot -= 2f;
-
-		movement = new Vector2 (speed.x * inputX, speed.y * inputY);			
+			movement = new Vector2 (speed.x * inputX, speed.y * inputY);	
+			
+		}
 		Deaccelerate();
 	}
 	
