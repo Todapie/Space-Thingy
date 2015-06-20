@@ -19,7 +19,7 @@ public class WeaponScript : MonoBehaviour
 		}
 	}
 
-	public void Attack(bool isEnemy, float rotation, float size, int mass, int playerID, int damage, Vector3 position)
+	public void Attack(bool isEnemy, float rotation, float scaleSize, int mass, int playerID, int damage, Vector3 position)
 	{
 		if (CanAttack)
 		{
@@ -32,9 +32,7 @@ public class WeaponScript : MonoBehaviour
 			shot.mass = mass;
 			shot.PlayerID = playerID;
 
-			shot.transform.localScale *= (damage / 5f);
-			if (shot.transform.localScale.x <= 0.01f)
-				shot.transform.localScale = new Vector3(0.01f,0.01f ,01f);
+			shot.transform.localScale *= (scaleSize / 5f);
 			if (shot != null)
 			{
 				shot.isEnemyShot = isEnemy;
@@ -44,6 +42,7 @@ public class WeaponScript : MonoBehaviour
 			if (move != null)
 			{
 				move.rotation = rotation;
+				move.size = mass;
 			}
 		}
 	}

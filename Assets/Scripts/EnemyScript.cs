@@ -18,7 +18,7 @@ public class EnemyScript : MonoBehaviour
 
 	void Start() 
 	{
-		size = Mathf.RoundToInt((transform.localScale.x - 0.05f) / (0.005f));
+		size = 100;
 		ScaleThresholdCounter = 0f;
 	}
 
@@ -35,7 +35,12 @@ public class EnemyScript : MonoBehaviour
 			{
 				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
 				size -= bullet.damage;
-				transform.localScale = new Vector3( transform.localScale.x - (0.005f * bullet.damage), transform.localScale.y - (0.005f * bullet.damage), 1.1f);
+				if (size < 100)
+				{
+					transform.localScale = new Vector3( transform.localScale.x - ((float)size * 0.0015f), transform.localScale.y - (float)size * 0.0015f, 1.1f);
+				}
+				else
+					transform.localScale = new Vector3( 1f * ((float)size / 100f), 1f * (float)size / 100f, 1.1f);
 			}
 			else 
 			{
@@ -113,7 +118,7 @@ public class EnemyScript : MonoBehaviour
 			ScaleThresholdCounter = 0f;
 			if (size > 1) 
 			{
-				transform.localScale = new Vector3 (transform.localScale.x - 0.005f, transform.localScale.y - 0.005f, 1.1f);
+				transform.localScale = new Vector3 (transform.localScale.x - 0.1f, transform.localScale.y - 0.1f, 1.1f);
 				size -= 1;
 			}
 		}
@@ -151,7 +156,8 @@ public class EnemyScript : MonoBehaviour
 
 	}
 	
-	void Accelerate(bool choice) {
+	void Accelerate(bool choice) 
+	{
 		var tempRot = inputRot;
 		var multiplier = 1;
 		//Determine if W or S pressed. If S, flip rotation by 180 degrees so our math is opposite of W. 

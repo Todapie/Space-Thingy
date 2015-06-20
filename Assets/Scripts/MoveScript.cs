@@ -3,13 +3,16 @@ using System.Collections;
 
 public class MoveScript : MonoBehaviour 
 {
-	public Vector2 speed = new Vector2(1f, 1f);
+	public Vector2 speed = new Vector2(0f, 0f);
 	public Vector2 Direction = new Vector2(0f, 0f);
 	public float rotation;
+	public int size;
 	private Vector2 movement;
 
 	void Start () 
 	{
+		float bulletSpeed = getCalculatedBulletSpeed();
+		speed = new Vector2 (bulletSpeed, bulletSpeed);
 		var tempRot = rotation;
 		var multiplier = 1;
 
@@ -63,6 +66,20 @@ public class MoveScript : MonoBehaviour
 			transform.Rotate(transform.rotation.x, transform.rotation.y, tempRot);
 	}
 
+	float getCalculatedBulletSpeed()
+	{
+		float calculatedSpeed = 40f;
+		if (size >= 250)
+			calculatedSpeed = 40f - 5f;
+		else if(size >= 500)
+			calculatedSpeed = 40f - 10f;
+		else if(size >= 1500)
+			calculatedSpeed = 40f - 15f;
+		else if(size >= 3500)
+			calculatedSpeed = 40f - 20f;
+		return calculatedSpeed;
+	}
+
 	void Update()
 	{
 		movement = new Vector2(
@@ -73,7 +90,7 @@ public class MoveScript : MonoBehaviour
 	void FixedUpdate()
 	{
 		// 5 - Move the game object
-		GetComponent<Rigidbody2D>().velocity = movement * 5f;
+		GetComponent<Rigidbody2D>().velocity = movement * 3f;
 	}
 
 	void OnTriggerEnter2D (Collider2D other) 

@@ -53,8 +53,8 @@ public class PlayerScript : Photon.MonoBehaviour
 
 	void Start() 
 	{
-		transform.localScale = new Vector3( 0.05f, 0.05f, 0f);
-		size = 1;
+		transform.localScale = new Vector3( 1f, 1f, 0f);
+		size = 100;
 		ScaleThresholdCounter = 0f;
 		particles = Instantiate(particles) as ParticleSystem;
 		particles.transform.position = new Vector3(transform.position.x, transform.position.y, 2f);
@@ -87,15 +87,15 @@ public class PlayerScript : Photon.MonoBehaviour
 		if (other.name.Contains ("Food")) 
 		{
 			FoodScript f = other.GetComponent<FoodScript>();
-			if (size + f.mass > 50)
-				size = 50;
-			else
+//			if (size + f.mass > 50)
+//				size = 50;
+//			else
 				size += f.mass;
 			Destroy (other.gameObject);
 			Space s = gameObject.AddComponent<Space>();
 			s.food = Food;
 			s.CreateFood();
-			transform.localScale = new Vector3( 0.05f + (0.005f * size), 0.05f + (0.005f * size), 1.1f);
+			transform.localScale = new Vector3( transform.localScale.x + (0.01f * f.mass), transform.localScale.y + (0.01f * f.mass), 1.1f);
 		}
 	}
 
@@ -104,16 +104,16 @@ public class PlayerScript : Photon.MonoBehaviour
 		if (other.collider.name.Contains ("vertical")) 
 		{
 			if(inputX < 0)
-				inputX = 0.2f;
+				inputX = 4f;
 			else
-				inputX = -0.2f;
+				inputX = -4f;
 		}
 		if (other.collider.name.Contains ("horizontal")) 
 		{
 			if (inputY < 0)
-				inputY = 0.2f;
+				inputY = 4f;
 			else
-				inputY = -0.2f;
+				inputY = -4f;
 		}
 
 	}
@@ -133,25 +133,45 @@ public class PlayerScript : Photon.MonoBehaviour
 		if (ScaleThresholdCounter >= 0.01f) 
 		{
 			ScaleThresholdCounter = 0f;
-			if (size > 1) 
+			if (size > 100) 
 			{
-				transform.localScale = new Vector3 (transform.localScale.x - 0.005f, transform.localScale.y - 0.005f, 1.1f);
 				size -= 1;
+				transform.localScale = new Vector3 (transform.localScale.x - 0.1f, transform.localScale.y - 0.01f, 1.1f);
 			}
 		}
 	}
+
+	float getCalculatedSpeed()
+	{
+		float calculatedSpeed = 40f;
+		if (size >= 250)
+			calculatedSpeed = 40f - 5f;
+		else if(size >= 500)
+			calculatedSpeed = 40f - 10f;
+		else if(size >= 1500)
+			calculatedSpeed = 40f - 15f;
+		else if(size >= 3500)
+			calculatedSpeed = 40f - 20f;
+		return calculatedSpeed;
+	}
+
 	void WKey()
 	{
 		if (Input.GetKey (KeyCode.W)) 
 		{
-			if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 1.9f) {
+			if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= getCalculatedSpeed() * 0.95f) 
+			{
 				Accelerate (true);
-			} else if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) >= 5f) {
+			} 
+			else if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) >= (getCalculatedSpeed() * 2.5f)) 
+			{
 				inputX /= 1.1f;
 				inputY /= 1.1f;
 				
 				Accelerate (true);
-			} else {
+			} 
+			else 
+			{
 				inputX /= 1.01f;
 				inputY /= 1.01f;
 			}
@@ -166,11 +186,11 @@ public class PlayerScript : Photon.MonoBehaviour
 	{
 		if (Input.GetKey (KeyCode.S)) 
 		{
-			if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= 1.9f) 
+			if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) <= getCalculatedSpeed() * 0.95f) 
 			{
 				Accelerate (false);
 			} 
-			else if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) >= 5f) 
+			else if (Mathf.Sqrt ((inputX * inputX) + (inputY * inputY)) >= (getCalculatedSpeed() * 2.5f)) 
 			{
 				inputX /= 1.1f;
 				inputY /= 1.1f;
@@ -188,8 +208,7 @@ public class PlayerScript : Photon.MonoBehaviour
 	{
 		if (Input.GetKey (KeyCode.Space)) 
 		{
-			//temporary damage
-			var damage = size;
+			int damage = Mathf.RoundToInt((float)size / 10f);
 			WeaponScript weapon = GetComponent<WeaponScript> ();
 			if (weapon != null)
 				weapon.Attack (false, inputRot, transform.localScale.x, size, PlayerID, damage, transform.position);
@@ -198,14 +217,14 @@ public class PlayerScript : Photon.MonoBehaviour
 
 	void Deaccelerate()
 	{
-		if (Mathf.Abs (inputX) < 0.008f && !Accelerating && inputX != 0f) 
+		if (Mathf.Abs (inputX) < 0.08f && !Accelerating && inputX != 0f) 
 		{
 			inputX = 0f;
 			movement.x = 0f;
 		} 
 		else
 			inputX /= 1.005f;
-		if (Mathf.Abs (inputY) < 0.008f && !Accelerating && inputY != 0f)
+		if (Mathf.Abs (inputY) < 0.08f && !Accelerating && inputY != 0f)
 		{
 			inputY = 0f;
 			movement.y = 0f;
@@ -218,6 +237,8 @@ public class PlayerScript : Photon.MonoBehaviour
 	{
 		particles.transform.position = new Vector3(transform.position.x, transform.position.y, 2f);
 		particles.transform.Rotate(0, transform.rotation.z, 0);
+
+		Damage = Mathf.RoundToInt((float)size / 10f);
 
 		Shrink ();
 		if (inputRot < 0f)
@@ -267,15 +288,15 @@ public class PlayerScript : Photon.MonoBehaviour
 		if (inputRot == 270f)
 			inputY -= (.08f * multiplier);
 		else if(inputRot == 90f)
-			inputY += (.08f * multiplier);
+			inputY += (1f * multiplier);
 		else if (tempRot == 180f)
-			inputX -= (.08f * multiplier);
+			inputX -= (1f * multiplier);
 		else if (tempRot == 360f) 
-			inputX += (.08f * multiplier);
+			inputX += (1f * multiplier);
 		else if (tempRot == 0f && inputRot == 180f)
-			inputX -= (.08f * multiplier);
+			inputX -= (1f * multiplier);
 		else if (tempRot == 0f && inputRot == 0f)
-			inputX += (.08f * multiplier);
+			inputX += (1f * multiplier);
 
 		if (tempRot != 90f && tempRot != 180f && tempRot != 0f && tempRot != 360f && tempRot != 270f) 
 		{
@@ -310,8 +331,8 @@ public class PlayerScript : Photon.MonoBehaviour
 				x = (1f / (1f + ratio));
 				y = (ratio / (1f + ratio));
 			}
-				inputX+= (x * 0.08f * domainX);
-				inputY += (y * 0.08f * domainY);
+				inputX+= (x * 1f * domainX);
+				inputY += (y * 1f * domainY);
 		}
 	}
 

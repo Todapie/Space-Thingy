@@ -10,7 +10,7 @@ public class FoodScript : MonoBehaviour
 	public int mass = 1;
 	private Vector2 movement = new Vector2(0f, 0f);
 	public BulletScript bullet;
-	
+	private bool readyNow;
 
 	void Start () 
 	{
@@ -81,6 +81,13 @@ public class FoodScript : MonoBehaviour
 		}
 		GetComponent<Rigidbody2D>().velocity = movement;
 	}
+
+	IEnumerator foodCollision()
+	{
+		readyNow = false;
+		yield return new WaitForSeconds(2);
+		readyNow = true;
+	}
 	
 	void OnTriggerEnter2D (Collider2D other) 
 	{
@@ -115,7 +122,7 @@ public class FoodScript : MonoBehaviour
 			{
 				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
 				mass -= bullet.damage;
-				transform.localScale = new Vector3( transform.localScale.x - (0.01f * bullet.damage), transform.localScale.y - (0.01f * bullet.damage), 1.1f);
+				transform.localScale = new Vector3( transform.localScale.x - (0.1f * bullet.damage), transform.localScale.y - (0.1f * bullet.damage), 1.1f);
 			}
 			else 
 			{
@@ -126,6 +133,8 @@ public class FoodScript : MonoBehaviour
 
 		if (other.name.Contains ("Food")) 
 		{
+			//foodCollision();
+			//if(readyNow){}
 			if (GameObject.FindGameObjectsWithTag ("Background").Length > 0) 
 			{
 				GameObject Background = GameObject.FindGameObjectsWithTag ("Background") [0];
@@ -182,7 +191,7 @@ public class FoodScript : MonoBehaviour
 						f.Direction.x = ratioX;
 						f.Direction.y = ratioY;
 
-						f.transform.localScale = new Vector3 (f.mass * 0.02f, f.mass * 0.02f, 1f);
+						f.transform.localScale = new Vector3 ((f.mass * 0.04f) + 0.4f, (f.mass * 0.04f) + 0.4f, 1f);
 
 						s.collison = true;
 						f.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);

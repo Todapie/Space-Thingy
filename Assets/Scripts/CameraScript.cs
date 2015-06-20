@@ -20,14 +20,14 @@ public class CameraScript : MonoBehaviour
 				playerX = Player.transform.position.x;
 				playerY = Player.transform.position.y;
 
-				if(playerX > -18 && playerX < 18)
-				{
+				//if(playerX > -18 && playerX < 18)
+				//{
 					cameraX = playerX;
-				}
-				if(playerY > -16.5 && playerY < 16.5)
-				{
+				//}
+				//if(playerY > -16.5 && playerY < 16.5)
+				//{
 					cameraY = playerY;
-				}
+				//}
 
 				Camera.main.transform.position = new Vector3 (cameraX, cameraY, -10);
 

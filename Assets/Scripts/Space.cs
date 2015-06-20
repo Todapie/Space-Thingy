@@ -14,10 +14,10 @@ public class Space : MonoBehaviour
 			for (int i = 0; i < 100; i++)
 			{
 				var foodTransform = Instantiate(food) as Transform;
-				foodTransform.position = new Vector3 (Random.Range (-16, 16), Random.Range (-14, 14), 5f);
+				foodTransform.position = new Vector3 (Random.Range (-490, 490), Random.Range (-390, 390), 5f);
 				FoodScript f = foodTransform.GetComponent<FoodScript>();
 				f.rotation = Random.Range(1, 360);
-				f.speed = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
+				f.speed = new Vector2(Random.Range(-10f, 10f), Random.Range(-10f, 10f));
 				f.mass = 1;
 			}
 		}
@@ -26,10 +26,10 @@ public class Space : MonoBehaviour
 	public void CreateFood()
 	{
 		var foodTransform = Instantiate(food) as Transform;
-		foodTransform.position = new Vector3 (Random.Range (-16, 16), Random.Range (-14, 14), 5f);
+		foodTransform.position = new Vector3 (Random.Range (-490, 490), Random.Range (-390, 390), 5f);
 		FoodScript f = foodTransform.GetComponent<FoodScript>();
 		f.rotation = Random.Range(1, 360);
-		f.speed = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f));
+		f.speed = new Vector2(Random.Range(-10f, 10f), Random.Range(-10f, 10f));
 		f.mass = 1;
 	}
 	
@@ -37,10 +37,10 @@ public class Space : MonoBehaviour
 	{
 		for (int i = 0; i < damage; i++) 
 		{
-			float scale = 0.02f;
+			float scale = 0.4f;
 			var fs = Instantiate (food) as Transform;
 			FoodScript f = fs.GetComponent<FoodScript>();
-			f.speed = new Vector2(Random.Range(-0.2f, 0.2f),Random.Range(-0.2f, 0.2f));
+			f.speed = new Vector2(Random.Range(-10f, 10f), Random.Range(-10f, 10f));
 			f.mass = 1;
 			f.rotation = Random.Range(1, 360);
 			float X = x / 1.05f;
