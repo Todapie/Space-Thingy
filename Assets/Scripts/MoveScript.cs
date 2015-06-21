@@ -85,6 +85,9 @@ public class MoveScript : MonoBehaviour
 		movement = new Vector2(
 			speed.x * Direction.x,
 			speed.y * Direction.y);
+
+		if (speed.x < 2f || speed.y < 2f)
+			Destroy (gameObject);
 	}
 
 	void FixedUpdate()
@@ -102,8 +105,8 @@ public class MoveScript : MonoBehaviour
 
 		if (other.name.Contains ("Bullet")) 
 		{
-			Destroy (gameObject );
-			Destroy(other.gameObject);
+			//Destroy (gameObject );
+			//Destroy(other.gameObject);
 		}
 	}
 }

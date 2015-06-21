@@ -6,7 +6,7 @@ public class EnemyScript : MonoBehaviour
 	public BulletScript bullet;
 	public Vector2 speed = new Vector2(1, 1);
 	public int size;
-	private Vector2 movement;
+	private Vector2 movement = new Vector2(0, 0);
 	public float inputX = 0.0f;
 	public float inputY = 0.0f;
 	public float inputRot = 0.0f;

@@ -21,7 +21,7 @@ public class PlayerScript : Photon.MonoBehaviour
 	private Vector3 syncEndPosition = Vector3.zero;
 	private float ScaleThresholdCounter;
 	private bool Accelerating = false;
-	private int PlayerID;
+	private int PlayerID = 0;
 	public int Damage;
 	public ParticleSystem particles;
 

@@ -10,7 +10,8 @@ public class FoodScript : MonoBehaviour
 	public int mass = 1;
 	private Vector2 movement = new Vector2(0f, 0f);
 	public BulletScript bullet;
-	private bool readyNow;
+	public bool readyNow;
+	private float beforeTimer = 0f;
 
 	void Start () 
 	{
@@ -65,6 +66,19 @@ public class FoodScript : MonoBehaviour
 			speed.x * Direction.x,
 			speed.y * Direction.y);
 	}
+
+	void Update() 
+	{
+		if(!readyNow)
+		{
+			float endTime = Time.time;
+			if (endTime - beforeTimer >= 3f && beforeTimer != 0f) 
+			{
+				readyNow = true;
+				beforeTimer = 0f;
+			}
+		}
+	}
 	
 	void FixedUpdate()
 	{
@@ -80,13 +94,6 @@ public class FoodScript : MonoBehaviour
 				speed.y * Direction.y);
 		}
 		GetComponent<Rigidbody2D>().velocity = movement;
-	}
-
-	IEnumerator foodCollision()
-	{
-		readyNow = false;
-		yield return new WaitForSeconds(2);
-		readyNow = true;
 	}
 	
 	void OnTriggerEnter2D (Collider2D other) 
@@ -107,13 +114,14 @@ public class FoodScript : MonoBehaviour
 			var bulletMove = other.gameObject.GetComponent<MoveScript>();
 
 			if (mass == 1)
-				bulletMove.speed /= 2.5f;
+				bulletMove.speed /= 2.0f;
 			else
 				Destroy (other.gameObject);
 
 			Space s = gameObject.AddComponent<Space>();
 
 			s.food = food;
+			readyNow = false;
 
 			if (mass == 1)
 				return;
@@ -122,7 +130,10 @@ public class FoodScript : MonoBehaviour
 			{
 				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
 				mass -= bullet.damage;
-				transform.localScale = new Vector3( transform.localScale.x - (0.1f * bullet.damage), transform.localScale.y - (0.1f * bullet.damage), 1.1f);
+				if (mass > 1)
+					transform.localScale = new Vector3((mass * 0.02f) + 0.4f, (mass * 0.02f) + 0.4f, 1.1f);
+				else
+					transform.localScale = new Vector3(0.4f, 0.4f, 1.1f);
 			}
 			else 
 			{
@@ -133,76 +144,87 @@ public class FoodScript : MonoBehaviour
 
 		if (other.name.Contains ("Food")) 
 		{
-			//foodCollision();
-			//if(readyNow){}
-			if (GameObject.FindGameObjectsWithTag ("Background").Length > 0) 
+			FoodScript ff = other.gameObject.GetComponent<FoodScript>();
+			if (!readyNow || !ff.readyNow)
 			{
-				GameObject Background = GameObject.FindGameObjectsWithTag ("Background") [0];
-
-				if (Background != null)
+				beforeTimer = Time.time;
+			}
+			else 
+			{
+				if (GameObject.FindGameObjectsWithTag ("Background").Length > 0) 
 				{
-					Space s = Background.transform.GetComponent<Space>();
-
-					if(!s.collison)
+					GameObject Background = GameObject.FindGameObjectsWithTag ("Background") [0];
+					
+					if (Background != null)
 					{
-						var foodTransform = Instantiate(food) as Transform;
-						FoodScript f = foodTransform.GetComponent<FoodScript>();
-						FoodScript f2 = other.gameObject.GetComponent<FoodScript>();
-
-						if (mass >= f2.mass)
-							foodTransform.position = transform.position;
-						else if( mass < f2.mass)
-							foodTransform.position = f2.transform.position;
-
-						var massOfThisObject = mass;
+						Space s = Background.transform.GetComponent<Space>();
 						
-						var massOfCollider = f2.mass;
-						f.mass = massOfThisObject + massOfCollider;
-
-
-						Vector2 velocityOfThisObject = movement;
-						
-						Vector2 velocityOfCollider = f2.movement;
-
-						float VX = ((massOfThisObject * velocityOfThisObject.x) + (massOfCollider * velocityOfCollider.x)) / (massOfCollider + massOfThisObject);
-						float VY = ((massOfThisObject * velocityOfThisObject.y) + (massOfCollider * velocityOfCollider.y)) / (massOfCollider + massOfThisObject);
-
-						Vector2 resultant = new Vector2(VX,VY);
-						float theta = Mathf.Atan(VY/VX) * (180f / Mathf.PI);
-						f.rotation = theta;
-
-						theta = Mathf.Abs(Mathf.Tan(theta));
-						
-						float ratioY = 1;
-						float ratioX = 1;
-						
-						if (theta > 1f) 
+						if(!s.collison)
 						{
-							ratioY = theta / (theta + 1f);
-							ratioX = 1f / (theta + 1f);
+							var foodTransform = Instantiate(food) as Transform;
+							FoodScript f = foodTransform.GetComponent<FoodScript>();
+							f.readyNow = true;
+//							if (other == null)
+//								return;
+							FoodScript f2 = other.gameObject.GetComponent<FoodScript>();
+							
+							if (mass >= f2.mass)
+								foodTransform.position = transform.position;
+							else if( mass < f2.mass)
+								foodTransform.position = f2.transform.position;
+							
+							var massOfThisObject = mass;
+							var massOfCollider = f2.mass;
+							Vector2 velocityOfThisObject = movement;
+							Vector2 velocityOfCollider = f2.movement;
+							
+							f.mass = massOfThisObject + massOfCollider;
+							
+							float VX = ((massOfThisObject * velocityOfThisObject.x) + (massOfCollider * velocityOfCollider.x)) / (massOfCollider + massOfThisObject);
+							float VY = ((massOfThisObject * velocityOfThisObject.y) + (massOfCollider * velocityOfCollider.y)) / (massOfCollider + massOfThisObject);
+							Destroy(gameObject);
+
+							//prevent super fast horrifically awesome af food from bouncing around
+							while (Mathf.Sqrt(Mathf.Pow(VX, 2) + Mathf.Pow(VY, 2)) > 20f)
+							{
+								VX /= 1.001f;
+								VY /= 1.001f;
+							}
+							Vector2 resultant = new Vector2(VX,VY);
+							float theta = Mathf.Atan(VY/VX) * (180f / Mathf.PI);
+							f.rotation = theta;
+							
+							theta = Mathf.Abs(Mathf.Tan(theta));
+							
+							float ratioY = 1;
+							float ratioX = 1;
+							
+							if (theta > 1f) 
+							{
+								ratioY = theta / (theta + 1f);
+								ratioX = 1f / (theta + 1f);
+							}
+							else 
+							{
+								ratioX = (1f / (1f + theta));
+								ratioY = (theta / (1f + theta));
+							}
+							
+							f.speed = resultant;
+							f.Direction.x = ratioX;
+							f.Direction.y = ratioY;
+							f.transform.localScale = new Vector3 ((f.mass * 0.02f) + 0.4f, (f.mass * 0.02f) + 0.4f, 1f);
+							s.collison = true;
+							f.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
+							
 						}
-						else 
+						else
 						{
-							ratioX = (1f / (1f + theta));
-							ratioY = (theta / (1f + theta));
+							//gameObject.SetActive(false);
+							Destroy(gameObject);
+							
+							s.collison = false;
 						}
-
-						f.speed = resultant;
-						f.Direction.x = ratioX;
-						f.Direction.y = ratioY;
-
-						f.transform.localScale = new Vector3 ((f.mass * 0.04f) + 0.4f, (f.mass * 0.04f) + 0.4f, 1f);
-
-						s.collison = true;
-						f.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
-
-						Destroy(gameObject);
-					}
-					else
-					{
-						Destroy(gameObject);
-
-						s.collison = false;
 					}
 				}
 			}
