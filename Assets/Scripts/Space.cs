@@ -11,7 +11,7 @@ public class Space : MonoBehaviour
 	{
 		if (GameObject.FindGameObjectsWithTag ("Food").Length == 0) 
 		{
-			for (int i = 0; i < 500; i++)
+			for (int i = 0; i < 300; i++)
 			{
 				var foodTransform = Instantiate(food) as Transform;
 				foodTransform.position = new Vector3 (Random.Range (-450, 450), Random.Range (-350, 350), 5f);
@@ -26,13 +26,16 @@ public class Space : MonoBehaviour
 
 	public void CreateFood()
 	{
-		var foodTransform = Instantiate(food) as Transform;
-		foodTransform.position = new Vector3 (Random.Range (-450, 450), Random.Range (-350, 350), 5f);
-		FoodScript f = foodTransform.GetComponent<FoodScript>();
-		f.rotation = Random.Range(1, 360);
-		f.speed = new Vector2(Random.Range(-10f, 10f), Random.Range(-10f, 10f));
-		f.mass = 1;
-		f.readyNow = true;
+		if (GameObject.FindGameObjectsWithTag ("Food").Length < 300) 
+		{
+			var foodTransform = Instantiate(food) as Transform;
+			foodTransform.position = new Vector3 (Random.Range (-450, 450), Random.Range (-350, 350), 5f);
+			FoodScript f = foodTransform.GetComponent<FoodScript>();
+			f.rotation = Random.Range(1, 360);
+			f.speed = new Vector2(Random.Range(-10f, 10f), Random.Range(-10f, 10f));
+			f.mass = 1;
+			f.readyNow = true;
+		}
 	}
 	
 	public void DisperseFood(float x, float y, int damage)

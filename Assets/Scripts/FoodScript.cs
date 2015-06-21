@@ -13,6 +13,11 @@ public class FoodScript : MonoBehaviour
 	public bool readyNow;
 	private float beforeTimer = 0f;
 
+	void Awake () {
+		// Make the game run as fast as possible in Windows
+		Application.targetFrameRate = 300;
+	}
+	
 	void Start () 
 	{
 		var tempRot = rotation;
@@ -114,7 +119,10 @@ public class FoodScript : MonoBehaviour
 			var bulletMove = other.gameObject.GetComponent<MoveScript>();
 
 			if (mass == 1)
+			{
 				bulletMove.speed /= 2.0f;
+				return;
+			}
 			else
 				Destroy (other.gameObject);
 
@@ -122,9 +130,6 @@ public class FoodScript : MonoBehaviour
 
 			s.food = food;
 			readyNow = false;
-
-			if (mass == 1)
-				return;
 
 			if (mass-bullet.damage > 0) 
 			{
@@ -164,8 +169,7 @@ public class FoodScript : MonoBehaviour
 							var foodTransform = Instantiate(food) as Transform;
 							FoodScript f = foodTransform.GetComponent<FoodScript>();
 							f.readyNow = true;
-//							if (other == null)
-//								return;
+
 							FoodScript f2 = other.gameObject.GetComponent<FoodScript>();
 							
 							if (mass >= f2.mass)
@@ -216,13 +220,10 @@ public class FoodScript : MonoBehaviour
 							f.transform.localScale = new Vector3 ((f.mass * 0.02f) + 0.4f, (f.mass * 0.02f) + 0.4f, 1f);
 							s.collison = true;
 							f.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
-							
 						}
 						else
 						{
-							//gameObject.SetActive(false);
 							Destroy(gameObject);
-							
 							s.collison = false;
 						}
 					}

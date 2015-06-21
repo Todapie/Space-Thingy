@@ -24,26 +24,54 @@ public class WeaponScript : MonoBehaviour
 		if (CanAttack)
 		{
 			shootCooldown = shootingRate;
-			var shotTransform = Instantiate(Bullet) as Transform;
-
-			shotTransform.position = new Vector3(position.x, position.y, 1f);
-			BulletScript shot = shotTransform.gameObject.GetComponent<BulletScript>();
-			shot.damage = damage;
-			shot.mass = mass;
-			shot.PlayerID = playerID;
-
-			shot.transform.localScale *= (scaleSize / 5f);
-			if (shot != null)
+			int numberOfIterations = 1;
+			if (mass >= 250)
+				numberOfIterations = 2;
+			else if(mass >= 500)
+				numberOfIterations = 2;
+			else if(mass >= 1500)
+				numberOfIterations = 1;
+			else if(mass >=3500)
+				numberOfIterations = 1;
+			for (int i = 0; i < numberOfIterations; i++) 
 			{
-				shot.isEnemyShot = isEnemy;
+				var shotTransform = Instantiate(Bullet) as Transform;
+				shotTransform.position = new Vector3(position.x, position.y, 1f);
+
+				BulletScript shot = shotTransform.gameObject.GetComponent<BulletScript>();
+				shot.damage = damage;
+				shot.mass = mass;
+				shot.PlayerID = playerID;
+				
+				shot.transform.localScale *= (scaleSize / 5f);
+				if (shot != null)
+				{
+					shot.isEnemyShot = isEnemy;
+				}
+				
+				MoveScript move = shotTransform.gameObject.GetComponent<MoveScript>();
+				if (move != null)
+				{
+					move.rotation = rotation;
+
+					if (numberOfIterations == 2 && i == 0) 
+					{
+						if(rotation-3 < 0)
+							move.rotation = rotation + 357f;
+						else
+							move.rotation = rotation-3f;
+					}
+					if(numberOfIterations == 2 && i == 1)
+					{
+						if(rotation+3 > 360)
+							move.rotation = rotation - 357f;
+						else
+							move.rotation = rotation+3f;
+					}
+					move.size = mass;
+				}
 			}
 
-			MoveScript move = shotTransform.gameObject.GetComponent<MoveScript>();
-			if (move != null)
-			{
-				move.rotation = rotation;
-				move.size = mass;
-			}
 		}
 	}
 

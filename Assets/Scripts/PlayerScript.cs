@@ -87,10 +87,7 @@ public class PlayerScript : Photon.MonoBehaviour
 		if (other.name.Contains ("Food")) 
 		{
 			FoodScript f = other.GetComponent<FoodScript>();
-//			if (size + f.mass > 50)
-//				size = 50;
-//			else
-				size += f.mass;
+			size += f.mass;
 			Destroy (other.gameObject);
 			Space s = gameObject.AddComponent<Space>();
 			s.food = Food;
