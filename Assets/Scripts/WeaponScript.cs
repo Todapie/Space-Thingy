@@ -36,7 +36,7 @@ public class WeaponScript : MonoBehaviour
 			for (int i = 0; i < numberOfIterations; i++) 
 			{
 				var shotTransform = Instantiate(Bullet) as Transform;
-				shotTransform.position = new Vector3(position.x, position.y, 1f);
+				shotTransform.position = new Vector3(position.x, position.y, 1.1f);
 
 				BulletScript shot = shotTransform.gameObject.GetComponent<BulletScript>();
 				shot.damage = damage;

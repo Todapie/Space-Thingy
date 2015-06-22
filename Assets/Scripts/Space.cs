@@ -5,8 +5,7 @@ public class Space : MonoBehaviour
 {
 	public Transform food;
 	public bool collison = false;
-
-	// Use this for initialization
+	
 	void Start () 
 	{
 		if (GameObject.FindGameObjectsWithTag ("Food").Length == 0) 

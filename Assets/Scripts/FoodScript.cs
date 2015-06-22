@@ -12,11 +12,6 @@ public class FoodScript : MonoBehaviour
 	public BulletScript bullet;
 	public bool readyNow;
 	private float beforeTimer = 0f;
-
-	void Awake () {
-		// Make the game run as fast as possible in Windows
-		Application.targetFrameRate = 300;
-	}
 	
 	void Start () 
 	{
@@ -77,7 +72,7 @@ public class FoodScript : MonoBehaviour
 		if(!readyNow)
 		{
 			float endTime = Time.time;
-			if (endTime - beforeTimer >= 3f && beforeTimer != 0f) 
+			if (endTime - beforeTimer >= 1.5f && beforeTimer != 0f) 
 			{
 				readyNow = true;
 				beforeTimer = 0f;
@@ -100,7 +95,18 @@ public class FoodScript : MonoBehaviour
 		}
 		GetComponent<Rigidbody2D>().velocity = movement;
 	}
-	
+
+	void OnTriggerExit2D (Collider2D other)
+	{
+		FoodScript ff = other.gameObject.GetComponent<FoodScript>();
+		if (ff == null)
+			return;
+		if (readyNow && ff.readyNow) 
+		{
+			foodToFoodCollision(other);
+		}
+	}
+
 	void OnTriggerEnter2D (Collider2D other) 
 	{
 		if (other.name.Contains ("vertical")) 
@@ -156,80 +162,84 @@ public class FoodScript : MonoBehaviour
 			}
 			else 
 			{
-				if (GameObject.FindGameObjectsWithTag ("Background").Length > 0) 
-				{
-					GameObject Background = GameObject.FindGameObjectsWithTag ("Background") [0];
-					
-					if (Background != null)
-					{
-						Space s = Background.transform.GetComponent<Space>();
-						
-						if(!s.collison)
-						{
-							var foodTransform = Instantiate(food) as Transform;
-							FoodScript f = foodTransform.GetComponent<FoodScript>();
-							f.readyNow = true;
-
-							FoodScript f2 = other.gameObject.GetComponent<FoodScript>();
-							
-							if (mass >= f2.mass)
-								foodTransform.position = transform.position;
-							else if( mass < f2.mass)
-								foodTransform.position = f2.transform.position;
-							
-							var massOfThisObject = mass;
-							var massOfCollider = f2.mass;
-							Vector2 velocityOfThisObject = movement;
-							Vector2 velocityOfCollider = f2.movement;
-							
-							f.mass = massOfThisObject + massOfCollider;
-							
-							float VX = ((massOfThisObject * velocityOfThisObject.x) + (massOfCollider * velocityOfCollider.x)) / (massOfCollider + massOfThisObject);
-							float VY = ((massOfThisObject * velocityOfThisObject.y) + (massOfCollider * velocityOfCollider.y)) / (massOfCollider + massOfThisObject);
-							Destroy(gameObject);
-
-							//prevent super fast horrifically awesome af food from bouncing around
-							while (Mathf.Sqrt(Mathf.Pow(VX, 2) + Mathf.Pow(VY, 2)) > 20f)
-							{
-								VX /= 1.001f;
-								VY /= 1.001f;
-							}
-							Vector2 resultant = new Vector2(VX,VY);
-							float theta = Mathf.Atan(VY/VX) * (180f / Mathf.PI);
-							f.rotation = theta;
-							
-							theta = Mathf.Abs(Mathf.Tan(theta));
-							
-							float ratioY = 1;
-							float ratioX = 1;
-							
-							if (theta > 1f) 
-							{
-								ratioY = theta / (theta + 1f);
-								ratioX = 1f / (theta + 1f);
-							}
-							else 
-							{
-								ratioX = (1f / (1f + theta));
-								ratioY = (theta / (1f + theta));
-							}
-							
-							f.speed = resultant;
-							f.Direction.x = ratioX;
-							f.Direction.y = ratioY;
-							f.transform.localScale = new Vector3 ((f.mass * 0.02f) + 0.4f, (f.mass * 0.02f) + 0.4f, 1f);
-							s.collison = true;
-							f.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
-						}
-						else
-						{
-							Destroy(gameObject);
-							s.collison = false;
-						}
-					}
-				}
+				foodToFoodCollision(other);
 			}
 		}
 
+	}
+	void foodToFoodCollision(Collider2D other)
+	{
+		if (GameObject.FindGameObjectsWithTag ("Background").Length > 0) 
+		{
+			GameObject Background = GameObject.FindGameObjectsWithTag ("Background") [0];
+			
+			if (Background != null)
+			{
+				Space s = Background.transform.GetComponent<Space>();
+				
+				if(!s.collison)
+				{
+					var foodTransform = Instantiate(food) as Transform;
+					FoodScript f = foodTransform.GetComponent<FoodScript>();
+					f.readyNow = true;
+					
+					FoodScript f2 = other.gameObject.GetComponent<FoodScript>();
+					
+					if (mass >= f2.mass)
+						foodTransform.position = transform.position;
+					else if( mass < f2.mass)
+						foodTransform.position = f2.transform.position;
+					
+					var massOfThisObject = mass;
+					var massOfCollider = f2.mass;
+					Vector2 velocityOfThisObject = movement;
+					Vector2 velocityOfCollider = f2.movement;
+					
+					f.mass = massOfThisObject + massOfCollider;
+					
+					float VX = ((massOfThisObject * velocityOfThisObject.x) + (massOfCollider * velocityOfCollider.x)) / (massOfCollider + massOfThisObject);
+					float VY = ((massOfThisObject * velocityOfThisObject.y) + (massOfCollider * velocityOfCollider.y)) / (massOfCollider + massOfThisObject);
+					Destroy(gameObject);
+					
+					//prevent super fast horrifically awesome af food from bouncing around
+					while (Mathf.Sqrt(Mathf.Pow(VX, 2) + Mathf.Pow(VY, 2)) > 20f)
+					{
+						VX /= 1.001f;
+						VY /= 1.001f;
+					}
+					Vector2 resultant = new Vector2(VX,VY);
+					float theta = Mathf.Atan(VY/VX) * (180f / Mathf.PI);
+					f.rotation = theta;
+					
+					theta = Mathf.Abs(Mathf.Tan(theta));
+					
+					float ratioY = 1;
+					float ratioX = 1;
+					
+					if (theta > 1f) 
+					{
+						ratioY = theta / (theta + 1f);
+						ratioX = 1f / (theta + 1f);
+					}
+					else 
+					{
+						ratioX = (1f / (1f + theta));
+						ratioY = (theta / (1f + theta));
+					}
+					
+					f.speed = resultant;
+					f.Direction.x = ratioX;
+					f.Direction.y = ratioY;
+					f.transform.localScale = new Vector3 ((f.mass * 0.02f) + 0.4f, (f.mass * 0.02f) + 0.4f, 1f);
+					s.collison = true;
+					f.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
+				}
+				else
+				{
+					Destroy(gameObject);
+					s.collison = false;
+				}
+			}
+		}
 	}
 }

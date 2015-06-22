@@ -92,7 +92,6 @@ public class MoveScript : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		// 5 - Move the game object
 		GetComponent<Rigidbody2D>().velocity = movement * 3f;
 	}
 
@@ -101,12 +100,6 @@ public class MoveScript : MonoBehaviour
 		if (other.name.Contains ("vertical") || other.name.Contains ("horizontal")) 
 		{
 			Destroy (gameObject );
-		}
-
-		if (other.name.Contains ("Bullet")) 
-		{
-			//Destroy (gameObject );
-			//Destroy(other.gameObject);
 		}
 	}
 }

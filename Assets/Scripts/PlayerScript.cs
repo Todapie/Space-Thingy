@@ -332,7 +332,6 @@ public class PlayerScript : Photon.MonoBehaviour
 				inputY += (y * 1f * domainY);
 		}
 	}
-
 	
 	void FixedUpdate()
 	{
