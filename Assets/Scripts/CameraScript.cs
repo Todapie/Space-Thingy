@@ -11,9 +11,8 @@ public class CameraScript : MonoBehaviour
 
 	void Update () 
 	{
-		if (GameObject.FindGameObjectsWithTag ("Player").Length > 0) 
-		{
-			Player = GameObject.FindGameObjectsWithTag ("Player") [0];
+		//if (GameObject.FindGameObjectsWithTag ("Player").Length > 0) 
+		//{
 			if (Player != null) 
 			{
 				float playerScale = Player.transform.localScale.x;
@@ -36,6 +35,14 @@ public class CameraScript : MonoBehaviour
 					Camera.main.orthographicSize = playerScale * 30;
 				//}
 			}
-		}
+			else
+			{
+				try
+				{
+					Player = GameObject.FindGameObjectsWithTag ("Player") [0];
+				}
+			catch(System.IndexOutOfRangeException ex){}
+			}
+		//}
 	}
 }

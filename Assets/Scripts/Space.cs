@@ -5,12 +5,14 @@ public class Space : MonoBehaviour
 {
 	public Transform food;
 	public bool collison = false;
+	private int designatedFoodLimit;
 	
 	void Start () 
 	{
+		designatedFoodLimit = 300;
 		if (GameObject.FindGameObjectsWithTag ("Food").Length == 0) 
 		{
-			for (int i = 0; i < 300; i++)
+			for (int i = 0; i < designatedFoodLimit; i++)
 			{
 				var foodTransform = Instantiate(food) as Transform;
 				foodTransform.position = new Vector3 (Random.Range (-450, 450), Random.Range (-280, 280), 5f);
@@ -25,7 +27,7 @@ public class Space : MonoBehaviour
 
 	public void CreateFood()
 	{
-		if (GameObject.FindGameObjectsWithTag ("Food").Length < 300) 
+		if (GameObject.FindGameObjectsWithTag ("Food").Length < designatedFoodLimit) 
 		{
 			var foodTransform = Instantiate(food) as Transform;
 			foodTransform.position = new Vector3 (Random.Range (-450, 450), Random.Range (-280, 280), 5f);
@@ -39,10 +41,12 @@ public class Space : MonoBehaviour
 	
 	public void DisperseFood(float x, float y, int damage)
 	{
+		FoodScript f = null;
+		Transform foodTransform = null;
 		for (int i = 0; i < damage; i++) 
 		{
-			var foodTransform = Instantiate (food) as Transform;
-			FoodScript f = foodTransform.GetComponent<FoodScript>();
+			foodTransform = Instantiate (food) as Transform;
+			f = foodTransform.GetComponent<FoodScript>();
 			f.speed = new Vector2(Random.Range(-10f, 10f), Random.Range(-10f, 10f));
 			f.readyNow = false;
 			f.mass = 1;
@@ -55,8 +59,7 @@ public class Space : MonoBehaviour
 			foodTransform.localScale = new Vector3(0.4f, 0.4f, 1.1f);
 		}
 	}
-
-	// Update is called once per frame
+	
 	void Update () 
 	{
 	}

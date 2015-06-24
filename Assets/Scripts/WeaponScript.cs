@@ -60,13 +60,19 @@ public class WeaponScript : MonoBehaviour
 							move.rotation = rotation + 357f;
 						else
 							move.rotation = rotation-3f;
+						//shot.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, move.rotation);
 					}
 					if(numberOfIterations == 2 && i == 1)
 					{
 						if(rotation+3 > 360)
+						{
 							move.rotation = rotation - 357f;
+						}
 						else
+						{
 							move.rotation = rotation+3f;
+						}
+						//shot.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, move.rotation);
 					}
 					move.size = mass;
 				}

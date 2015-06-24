@@ -14,45 +14,24 @@ public class PlayerScript : Photon.MonoBehaviour
 	public Rigidbody2D rb;
 	public Transform Food;
 	public string Name;
-	private float lastSynchronizationTime = 0f;
-	private float syncDelay = 0f;
-	private float syncTime = 0f;
-	private Vector3 syncStartPosition = Vector3.zero;
-	private Vector3 syncEndPosition = Vector3.zero;
+//	private float lastSynchronizationTime = 0f;
+//	private float syncDelay = 0f;
+//	private float syncTime = 0f;
+//	private Vector3 syncStartPosition = Vector3.zero;
+//	private Vector3 syncEndPosition = Vector3.zero;
 	private float ScaleThresholdCounter;
 	private bool Accelerating = false;
 	private int PlayerID = 0;
 	public int Damage;
 	public ParticleSystem particles;
+	private WeaponScript weapon;
+	private Space s;
 
-	void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
-	{
-		Vector3 syncPosition = Vector3.zero;
-		Vector3 syncVelocity = Vector3.zero;
-		if (stream.isWriting)
-		{
-			syncPosition = rb.position;
-			stream.Serialize(ref syncPosition);
 
-			syncVelocity = rb.velocity;
-			stream.Serialize(ref syncVelocity);
-		}
-		else
-		{
-			stream.Serialize(ref syncPosition);
-			stream.Serialize(ref syncVelocity);
-
-			syncTime = 0f;
-			syncDelay = Time.time - lastSynchronizationTime;
-			lastSynchronizationTime = Time.time;
-			
-			syncEndPosition = syncPosition + syncVelocity * syncDelay;
-			syncStartPosition = rb.position;
-		}
-	}
 
 	void Start() 
 	{
+		s = gameObject.AddComponent<Space>();
 		transform.localScale = new Vector3( 1f, 1f, 0f);
 		size = 100;
 		ScaleThresholdCounter = 0f;
@@ -89,7 +68,7 @@ public class PlayerScript : Photon.MonoBehaviour
 			FoodScript f = other.GetComponent<FoodScript>();
 			size += f.mass;
 			Destroy (other.gameObject);
-			Space s = gameObject.AddComponent<Space>();
+			s.collison = false;
 			s.food = Food;
 			s.CreateFood();
 			transform.localScale = new Vector3( transform.localScale.x + (0.01f * f.mass), transform.localScale.y + (0.01f * f.mass), 1.1f);
@@ -114,13 +93,6 @@ public class PlayerScript : Photon.MonoBehaviour
 		}
 
 	}
-
-	/*void OnGUI()
-	{
-		Vector3 tmpPos = Camera.main.WorldToScreenPoint (transform.position);
-		GUI.Label(new Rect(tmpPos.x,tmpPos.y, 100, 75), Name);
-		GUI.Label(new Rect(0, 0, 100, 75), size.ToString());
-	}*/
 
 	void Shrink()
 	{
@@ -206,8 +178,9 @@ public class PlayerScript : Photon.MonoBehaviour
 		if (Input.GetKey (KeyCode.Space)) 
 		{
 			int damage = Mathf.RoundToInt((float)size / 10f);
-			WeaponScript weapon = GetComponent<WeaponScript> ();
-			if (weapon != null)
+			if (weapon == null)
+				weapon = GetComponent<WeaponScript> ();
+			else
 				weapon.Attack (false, inputRot, transform.localScale.x, size, PlayerID, damage, transform.position);
 		}
 	}
@@ -257,12 +230,6 @@ public class PlayerScript : Photon.MonoBehaviour
 			
 		}
 		Deaccelerate();
-	}
-	
-	private void SyncedMovement()
-	{
-		syncTime += Time.deltaTime;
-		rb.position = Vector3.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
 	}
 
 	void Accelerate(bool choice) 
@@ -338,4 +305,45 @@ public class PlayerScript : Photon.MonoBehaviour
 		GetComponent<Rigidbody2D>().velocity = movement;
 		GetComponent<Rigidbody2D> ().rotation = inputRot;
 	}
+
+	//	void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
+	//	{
+	//		Debug.Log ("HIT OnSerializeNetworkView()");
+	//		Vector3 syncPosition = Vector3.zero;
+	//		Vector3 syncVelocity = Vector3.zero;
+	//		if (stream.isWriting)
+	//		{
+	//			syncPosition = rb.position;
+	//			stream.Serialize(ref syncPosition);
+	//
+	//			syncVelocity = rb.velocity;
+	//			stream.Serialize(ref syncVelocity);
+	//		}
+	//		else
+	//		{
+	//			stream.Serialize(ref syncPosition);
+	//			stream.Serialize(ref syncVelocity);
+	//
+	//			syncTime = 0f;
+	//			syncDelay = Time.time - lastSynchronizationTime;
+	//			lastSynchronizationTime = Time.time;
+	//			
+	//			syncEndPosition = syncPosition + syncVelocity * syncDelay;
+	//			syncStartPosition = rb.position;
+	//		}
+	//	}
+	
+	/*void OnGUI()
+	{
+		Vector3 tmpPos = Camera.main.WorldToScreenPoint (transform.position);
+		GUI.Label(new Rect(tmpPos.x,tmpPos.y, 100, 75), Name);
+		GUI.Label(new Rect(0, 0, 100, 75), size.ToString());
+	}*/
+	
+	//	private void SyncedMovement()
+	//	{
+	//		Debug.Log ("HIT SYNCEDMOVEMENT()");
+	//		syncTime += Time.deltaTime;
+	//		rb.position = Vector3.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
+	//	}
 }

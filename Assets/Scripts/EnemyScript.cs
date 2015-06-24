@@ -15,11 +15,13 @@ public class EnemyScript : MonoBehaviour
 	private float headingAngle;
 	private float ScaleThresholdCounter;
 	public Transform Food;
+	private Space s;
 
 	void Start() 
 	{
 		size = 100;
 		ScaleThresholdCounter = 0f;
+		s = gameObject.AddComponent<Space>();
 	}
 
 	void OnTriggerEnter2D(Collider2D other)
@@ -29,7 +31,6 @@ public class EnemyScript : MonoBehaviour
 			bullet = other.gameObject.GetComponent<BulletScript>();
 
 			Destroy (other.gameObject);
-			Space s = gameObject.AddComponent<Space>();
 			s.food = Food;
 			if (size-bullet.damage > 0) 
 			{
@@ -50,11 +51,11 @@ public class EnemyScript : MonoBehaviour
 		}
 	}
 
-	void OnGUI() 
-	{
-		Vector3 tmpPos = Camera.main.WorldToViewportPoint (transform.position);
-		GUI.Label(new Rect(tmpPos.x,tmpPos.y, 100, 75), size.ToString());
-	}
+//	void OnGUI() 
+//	{
+//		Vector3 tmpPos = Camera.main.WorldToViewportPoint (transform.position);
+//		GUI.Label(new Rect(tmpPos.x,tmpPos.y, 100, 75), size.ToString());
+//	}
 
 	void findFood() 
 	{
@@ -126,7 +127,7 @@ public class EnemyScript : MonoBehaviour
 		//Debug.Log ("update");
 		if (heading == origin) {
 			//Debug.Log("1");
-			findFood ();
+			//findFood ();
 		} else if (headingAngle - inputRot >= -1 && headingAngle - inputRot <= 1) {
 			//Debug.Log("2");
 			inputRot = headingAngle;
