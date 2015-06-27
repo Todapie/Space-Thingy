@@ -192,8 +192,8 @@ public class FoodScript : MonoBehaviour
 					
 					var massOfThisObject = mass;
 					var massOfCollider = f2.mass;
-					Vector2 velocityOfThisObject = movement;
-					Vector2 velocityOfCollider = f2.movement;
+					Vector2 velocityOfThisObject = speed;
+					Vector2 velocityOfCollider = f2.speed;
 					
 					f.mass = massOfThisObject + massOfCollider;
 
@@ -219,7 +219,11 @@ public class FoodScript : MonoBehaviour
 
 					
 					//---------------------------------------------------------------------------------------------------------------------------------
-					Vector2 resultant = (massOfCollider * velocityOfCollider + massOfThisObject * velocityOfThisObject) / (massOfCollider + massOfThisObject);
+					Vector2 resultant = ((massOfCollider * velocityOfCollider) + (massOfThisObject * velocityOfThisObject)) / (massOfCollider + massOfThisObject);
+
+					if ((f.mass > 300 || f2.mass > 300) && (resultant.x > 4f || resultant.y > 4f))
+						Debug.Log ("[m1: " + massOfThisObject + ", v1: " + velocityOfThisObject + ", d1: " + Direction.x +"] [m2: " + massOfCollider + ", v2: " + velocityOfCollider + ", d1: " + f2.Direction.x +"]");
+
 					float angle = Mathf.Atan(resultant.y / resultant.x) * (180f / Mathf.PI);
 
 					f.rotation = angle;
@@ -227,7 +231,7 @@ public class FoodScript : MonoBehaviour
 //					float VX = velocity * (Mathf.Cos(angle) * (180f / Mathf.PI));
 //					float VY = velocity * (Mathf.Sin(angle) * (180f / Mathf.PI));
 
-					angle = angle = Mathf.Abs(Mathf.Tan(angle));
+					angle = angle = (Mathf.Tan(angle));
 
 					float ratioY = 1;
 					float ratioX = 1;

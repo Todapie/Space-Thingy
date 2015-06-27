@@ -242,7 +242,8 @@ public class PlayerScript : Photon.MonoBehaviour
 		var multiplier = 1;
 		//Determine if W or S pressed. If S, flip rotation by 180 degrees so our math is opposite of W. 
 		//Value stored in temp variable to prevent the ship from just rotating 180 degrees like a derp.
-		if (!choice) {
+		if (!choice) 
+		{
 			multiplier = -1;
 			if (inputRot >= 180f)
 				tempRot -= 180f;
@@ -258,6 +259,8 @@ public class PlayerScript : Photon.MonoBehaviour
 			inputY += (1f * multiplier);
 		else if (tempRot == 180f)
 			inputX -= (1f * multiplier);
+		else if(tempRot == 180f && multiplier == -1)
+			inputX += (1f * multiplier);
 		else if (tempRot == 360f) 
 			inputX += (1f * multiplier);
 		else if (tempRot == 0f && inputRot == 180f)
