@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using System.Collections;
 
 public class PlayerScript : Photon.MonoBehaviour 
@@ -14,11 +15,6 @@ public class PlayerScript : Photon.MonoBehaviour
 	public Rigidbody2D rb;
 	public Transform Food;
 	public string Name;
-//	private float lastSynchronizationTime = 0f;
-//	private float syncDelay = 0f;
-//	private float syncTime = 0f;
-//	private Vector3 syncStartPosition = Vector3.zero;
-//	private Vector3 syncEndPosition = Vector3.zero;
 	private float ScaleThresholdCounter;
 	private bool Accelerating = false;
 	private int PlayerID = 0;
@@ -26,8 +22,10 @@ public class PlayerScript : Photon.MonoBehaviour
 	public ParticleSystem particles;
 	private WeaponScript weapon;
 	private Space s;
-
-
+	Vector3 m_NetworkPosition;
+	Quaternion m_NetworkRotation;
+	Vector2 m_Speed;
+	double m_LastNetworkDataReceivedTime;
 
 	void Start() 
 	{
@@ -35,9 +33,9 @@ public class PlayerScript : Photon.MonoBehaviour
 		transform.localScale = new Vector3( 1f, 1f, 0f);
 		size = 100;
 		ScaleThresholdCounter = 0f;
-		particles = Instantiate(particles) as ParticleSystem;
-		particles.transform.position = new Vector3(transform.position.x, transform.position.y, 2f);
-		particles.transform.Rotate(0, transform.rotation.z, 0);
+		//particles = Instantiate(particles) as ParticleSystem;
+		//particles.transform.position = new Vector2(transform.position.x, transform.position.y, 2f);
+		//particles.transform.Rotate(0, transform.rotation.z, 0);
 	}
 
 	void OnTriggerEnter2D(Collider2D other)
@@ -229,8 +227,13 @@ public class PlayerScript : Photon.MonoBehaviour
 			if (Input.GetKey (KeyCode.D))
 				inputRot -= 2f;
 
-			movement = new Vector2 (speed.x * inputX, speed.y * inputY);	
-			
+			movement = new Vector2 (speed.x * inputX, speed.y * inputY);
+			GetComponent<Rigidbody2D>().velocity = movement;
+			GetComponent<Rigidbody2D> ().rotation = inputRot;
+		}
+		else
+		{
+			UpdateNetworkedRotation();
 		}
 		Deaccelerate();
 	}
@@ -308,48 +311,74 @@ public class PlayerScript : Photon.MonoBehaviour
 	
 	void FixedUpdate()
 	{
-		GetComponent<Rigidbody2D>().velocity = movement;
-		GetComponent<Rigidbody2D> ().rotation = inputRot;
+
 	}
 
-	//	void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
-	//	{
-	//		Debug.Log ("HIT OnSerializeNetworkView()");
-	//		Vector3 syncPosition = Vector3.zero;
-	//		Vector3 syncVelocity = Vector3.zero;
-	//		if (stream.isWriting)
-	//		{
-	//			syncPosition = rb.position;
-	//			stream.Serialize(ref syncPosition);
-	//
-	//			syncVelocity = rb.velocity;
-	//			stream.Serialize(ref syncVelocity);
-	//		}
-	//		else
-	//		{
-	//			stream.Serialize(ref syncPosition);
-	//			stream.Serialize(ref syncVelocity);
-	//
-	//			syncTime = 0f;
-	//			syncDelay = Time.time - lastSynchronizationTime;
-	//			lastSynchronizationTime = Time.time;
-	//			
-	//			syncEndPosition = syncPosition + syncVelocity * syncDelay;
-	//			syncStartPosition = rb.position;
-	//		}
-	//	}
-	
-	/*void OnGUI()
+	void OnPhotonSerializeView( PhotonStream stream, PhotonMessageInfo info )
 	{
-		Vector3 tmpPos = Camera.main.WorldToScreenPoint (transform.position);
-		GUI.Label(new Rect(tmpPos.x,tmpPos.y, 100, 75), Name);
-		GUI.Label(new Rect(0, 0, 100, 75), size.ToString());
-	}*/
+		//Multiple components need to synchronize values over the network.
+		//The SerializeState methods are made up, but they're useful to keep
+		//all the data separated into their respective components
+		
+		SerializeState( stream, info );
+		
+		//ShipVisuals.SerializeState( stream, info );
+		//ShipMovement.SerializeState( stream, info );
+	}
+
+	public void SerializeState( PhotonStream stream, PhotonMessageInfo info )
+	{
+		//We only need to synchronize a couple of variables to be able to recreate a good
+		//approximation of the ships position on each client
+		//There is a lot of smoke and mirrors happening here
+		//Check out Part 1 Lesson 2 http://youtu.be/7hWuxxm6wsA for more detailed explanations
+		if( stream.isWriting == true )
+		{
+			stream.SendNext( transform.position );
+			stream.SendNext( transform.rotation );
+			stream.SendNext( speed );
+		}
+		else
+		{
+			m_NetworkPosition = (Vector3)stream.ReceiveNext();
+			m_NetworkRotation = (Quaternion)stream.ReceiveNext();
+			m_Speed = (Vector2)stream.ReceiveNext();
+			m_LastNetworkDataReceivedTime = info.timestamp;
+		}
+	}
+
+	void UpdateNetworkedPosition()
+	{
+		//Here we try to predict where the player actually is depending on the data we received through the network
+		//Check out Part 1 Lesson 2 http://youtu.be/7hWuxxm6wsA for more detailed explanations
+		float pingInSeconds = (float)PhotonNetwork.GetPing() * 0.001f;
+		float timeSinceLastUpdate = (float)( PhotonNetwork.time - m_LastNetworkDataReceivedTime );
+		float totalTimePassed = pingInSeconds + timeSinceLastUpdate;
+		
+		Vector3 exterpolatedTargetPosition = m_NetworkPosition
+			+ transform.forward * m_Speed.sqrMagnitude * totalTimePassed;
+		
+		
+		Vector3 newPosition = Vector3.MoveTowards( transform.position
+		                                          , exterpolatedTargetPosition
+		                                          , m_Speed.sqrMagnitude * Time.deltaTime );
+		
+		if( Vector2.Distance( transform.position, exterpolatedTargetPosition ) > 2f )
+		{
+			newPosition = exterpolatedTargetPosition;
+		}
+		
+		newPosition.y = Mathf.Clamp( newPosition.y, 0.5f, 50f );
+		
+		transform.position = newPosition;
+	}
 	
-	//	private void SyncedMovement()
-	//	{
-	//		Debug.Log ("HIT SYNCEDMOVEMENT()");
-	//		syncTime += Time.deltaTime;
-	//		rb.position = Vector3.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
-	//	}
+	void UpdateNetworkedRotation()
+	{
+		transform.rotation = Quaternion.RotateTowards(
+			transform.rotation,
+			m_NetworkRotation, 180f * Time.deltaTime
+			);
+	}
+
 }
