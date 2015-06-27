@@ -34,7 +34,7 @@ public class EnemyScript : MonoBehaviour
 			s.food = Food;
 			if (size-bullet.damage > 0) 
 			{
-				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
+				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage, size);
 				size -= bullet.damage;
 				if (size < 100)
 				{
@@ -45,7 +45,7 @@ public class EnemyScript : MonoBehaviour
 			}
 			else 
 			{
-				s.DisperseFood(transform.position.x, transform.position.y, size);
+				s.DisperseFood(transform.position.x, transform.position.y, size, size);
 				Destroy (transform.gameObject);
 			}
 		}

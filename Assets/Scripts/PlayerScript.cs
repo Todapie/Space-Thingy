@@ -52,13 +52,13 @@ public class PlayerScript : Photon.MonoBehaviour
 				s.food = Food;
 				if (size-bulletScript.damage > 0) 
 				{
-					s.DisperseFood(transform.position.x, transform.position.y, bulletScript.damage);
+					s.DisperseFood(transform.position.x, transform.position.y, bulletScript.damage, size);
 					size -= bulletScript.damage;
 					transform.localScale = new Vector3( transform.localScale.x - (0.005f * bulletScript.damage), transform.localScale.y - (0.005f * bulletScript.damage), 1.1f);
 				}
 				else 
 				{
-					s.DisperseFood(transform.position.x, transform.position.y, size);
+					s.DisperseFood(transform.position.x, transform.position.y, size, size);
 					Destroy (transform.gameObject);
 				}
 			}
@@ -66,12 +66,15 @@ public class PlayerScript : Photon.MonoBehaviour
 		if (other.name.Contains ("Food")) 
 		{
 			FoodScript f = other.GetComponent<FoodScript>();
-			size += f.mass;
-			Destroy (other.gameObject);
-			s.collison = false;
-			s.food = Food;
-			s.CreateFood();
-			transform.localScale = new Vector3( transform.localScale.x + (0.01f * f.mass), transform.localScale.y + (0.01f * f.mass), 1.1f);
+			if (f.mass <= size)
+			{
+				size += f.mass;
+				Destroy (other.gameObject);
+				s.collison = false;
+				s.food = Food;
+				s.CreateFood();
+				transform.localScale = new Vector3( transform.localScale.x + (0.01f * f.mass), transform.localScale.y + (0.01f * f.mass), 1.1f);
+			}
 		}
 	}
 

@@ -137,9 +137,9 @@ public class FoodScript : MonoBehaviour
 			s.food = food;
 			readyNow = false;
 
-			if (mass-bullet.damage > 0) 
+			if (mass-bullet.damage >= 0) 
 			{
-				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage);
+				s.DisperseFood(transform.position.x, transform.position.y, bullet.damage, mass);
 				mass -= bullet.damage;
 				if (mass > 1)
 					transform.localScale = new Vector3((mass * 0.02f) + 0.4f, (mass * 0.02f) + 0.4f, 1.1f);
@@ -148,7 +148,7 @@ public class FoodScript : MonoBehaviour
 			}
 			else 
 			{
-				s.DisperseFood(transform.position.x, transform.position.y, mass);
+				s.DisperseFood(transform.position.x, transform.position.y, mass, mass);
 				Destroy (transform.gameObject);
 			}
 		}
@@ -196,37 +196,55 @@ public class FoodScript : MonoBehaviour
 					Vector2 velocityOfCollider = f2.movement;
 					
 					f.mass = massOfThisObject + massOfCollider;
-					
-					float VX = ((massOfThisObject * velocityOfThisObject.x) + (massOfCollider * velocityOfCollider.x)) / (massOfCollider + massOfThisObject);
-					float VY = ((massOfThisObject * velocityOfThisObject.y) + (massOfCollider * velocityOfCollider.y)) / (massOfCollider + massOfThisObject);
+
+//					float VX = ((massOfThisObject * velocityOfThisObject.x) + (massOfCollider * velocityOfCollider.x)) / (massOfCollider + massOfThisObject);
+//					float VY = ((massOfThisObject * velocityOfThisObject.y) + (massOfCollider * velocityOfCollider.y)) / (massOfCollider + massOfThisObject);
 					Destroy(gameObject);
+//					if ((f.mass > 300 || f2.mass > 300) && (VX > 5f || VY > 5f))
+//						Debug.Log ("[m1: " + massOfThisObject + ", v1: " + velocityOfThisObject + "] [m2: " + massOfCollider + ", v2: " + velocityOfCollider + "]");
+//
+//					
+//					//prevent super fast horrifically awesome af food from bouncing around
+//					while (Mathf.Sqrt(Mathf.Pow(VX, 2) + Mathf.Pow(VY, 2)) > 20f)
+//					{
+//						VX /= 1.001f;
+//						VY /= 1.001f;
+//					}
+//
+//					float theta = Mathf.Atan(VY/VX) * (180f / Mathf.PI);
+//					f.rotation = theta;
+//					
+//					theta = Mathf.Abs(Mathf.Tan(theta));
+//					
+
 					
-					//prevent super fast horrifically awesome af food from bouncing around
-					while (Mathf.Sqrt(Mathf.Pow(VX, 2) + Mathf.Pow(VY, 2)) > 20f)
-					{
-						VX /= 1.001f;
-						VY /= 1.001f;
-					}
-					Vector2 resultant = new Vector2(VX,VY);
-					float theta = Mathf.Atan(VY/VX) * (180f / Mathf.PI);
-					f.rotation = theta;
-					
-					theta = Mathf.Abs(Mathf.Tan(theta));
-					
+					//---------------------------------------------------------------------------------------------------------------------------------
+					Vector2 resultant = (massOfCollider * velocityOfCollider + massOfThisObject * velocityOfThisObject) / (massOfCollider + massOfThisObject);
+					float angle = Mathf.Atan(resultant.y / resultant.x) * (180f / Mathf.PI);
+
+					f.rotation = angle;
+//					float velocity = massOfThisObject * velocityOfThisObject.x / (f.mass * (Mathf.Cos(angle) * (180f / Mathf.PI)));
+//					float VX = velocity * (Mathf.Cos(angle) * (180f / Mathf.PI));
+//					float VY = velocity * (Mathf.Sin(angle) * (180f / Mathf.PI));
+
+					angle = angle = Mathf.Abs(Mathf.Tan(angle));
+
 					float ratioY = 1;
 					float ratioX = 1;
 					
-					if (theta > 1f) 
+					if (angle > 1f) 
 					{
-						ratioY = theta / (theta + 1f);
-						ratioX = 1f / (theta + 1f);
+						ratioY = angle / (angle + 1f);
+						ratioX = 1f / (angle + 1f);
 					}
 					else 
 					{
-						ratioX = (1f / (1f + theta));
-						ratioY = (theta / (1f + theta));
+						ratioX = (1f / (1f + angle));
+						ratioY = (angle / (1f + angle));
 					}
-					
+
+
+
 					f.speed = resultant;
 					f.Direction.x = ratioX;
 					f.Direction.y = ratioY;
