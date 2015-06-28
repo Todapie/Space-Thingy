@@ -124,12 +124,12 @@ public class FoodScript : MonoBehaviour
 			bullet = other.gameObject.GetComponent<BulletScript>();
 			var bulletMove = other.gameObject.GetComponent<MoveScript>();
 
-			if (mass == 1)
-			{
-				bulletMove.speed /= 2.0f;
-				return;
-			}
-			else
+//			if (mass == 1)
+//			{
+//				bulletMove.speed /= 2.0f;
+//				return;
+//			}
+			//else
 				Destroy (other.gameObject);
 
 			Space s = gameObject.AddComponent<Space>();
