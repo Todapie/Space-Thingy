@@ -20,4 +20,17 @@ public class PhotonManagerScript : MonoBehaviour {
 	{
 		PhotonNetwork.Instantiate (playerPrefab, new Vector3(Random.Range(-7f, 7f), Random.Range(-5f, 5f), 0f), Quaternion.identity, 0);
 	}
+
+//	void OnLeftRoom()
+//	{
+//		Debug.Log ("LEFT ROOM");
+//		PhotonNetwork.Destroy ();
+//	}
+
+	void OnPlayerDisconnected(NetworkPlayer player)
+	{
+		Debug.Log("Clean up after player " + player);
+		Network.RemoveRPCs(player);
+		Network.DestroyPlayerObjects(player);
+	}
 }

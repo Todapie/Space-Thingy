@@ -231,7 +231,7 @@ public class FoodScript : MonoBehaviour
 //					float VX = velocity * (Mathf.Cos(angle) * (180f / Mathf.PI));
 //					float VY = velocity * (Mathf.Sin(angle) * (180f / Mathf.PI));
 
-					angle = angle = (Mathf.Tan(angle));
+					angle = (Mathf.Tan(angle));
 
 					float ratioY = 1;
 					float ratioX = 1;

@@ -26,6 +26,12 @@ public class PlayerScript : Photon.MonoBehaviour
 	Quaternion m_NetworkRotation;
 	Vector2 m_Speed;
 	double m_LastNetworkDataReceivedTime;
+	private Vector3 m_NetworkScale;
+	private double timeToReachGoal = 0.0;
+	private double lastPacketTime = 0.0;
+	private double currentPacketTime = 0.0;
+	private double currentTime = 0.0;
+	private Vector3 positionAtLastPacket = Vector3.zero;
 
 	void Start() 
 	{
@@ -33,9 +39,11 @@ public class PlayerScript : Photon.MonoBehaviour
 		transform.localScale = new Vector3( 1f, 1f, 0f);
 		size = 100;
 		ScaleThresholdCounter = 0f;
-		//particles = Instantiate(particles) as ParticleSystem;
-		//particles.transform.position = new Vector2(transform.position.x, transform.position.y, 2f);
-		//particles.transform.Rotate(0, transform.rotation.z, 0);
+		particles = Instantiate(particles) as ParticleSystem;
+		particles.transform.position = new Vector3(transform.position.x, transform.position.y, 2f);
+		particles.transform.Rotate(0, transform.rotation.z, 0);
+		PhotonNetwork.sendRate = 20;
+		PhotonNetwork.sendRateOnSerialize = 10;
 	}
 
 	void OnTriggerEnter2D(Collider2D other)
@@ -93,6 +101,19 @@ public class PlayerScript : Photon.MonoBehaviour
 				inputY = -4f;
 		}
 
+		if (other.collider.name.Contains ("Player")) 
+		{
+			Debug.Log (speed);
+		}
+
+	}
+
+	void OnCollisionExit2D(Collision2D other)
+	{
+		if (other.collider.name.Contains ("Player")) 
+		{
+			//Debug.Log (GetComponent<Rigidbody2D>().velocity);
+		}
 	}
 
 	void Shrink()
@@ -106,7 +127,6 @@ public class PlayerScript : Photon.MonoBehaviour
 			if (size > 100) 
 			{
 				size -= 1;
-				transform.localScale = new Vector3 (transform.localScale.x - 0.1f, transform.localScale.y - 0.01f, 1.1f);
 			}
 		}
 	}
@@ -233,7 +253,12 @@ public class PlayerScript : Photon.MonoBehaviour
 		}
 		else
 		{
+			//double timeToReachGoal = currentPacketTime - lastPacketTime;
+			//currentTime += Time.deltaTime;
+			//transform.position = Vector3.Lerp(positionAtLastPacket, m_NetworkPosition, (float)(currentTime / timeToReachGoal));
+			UpdateNetworkedPosition();
 			UpdateNetworkedRotation();
+			UpdateNetworkScale();
 		}
 		Deaccelerate();
 	}
@@ -308,11 +333,6 @@ public class PlayerScript : Photon.MonoBehaviour
 				inputY += (y * 1f * domainY);
 		}
 	}
-	
-	void FixedUpdate()
-	{
-
-	}
 
 	void OnPhotonSerializeView( PhotonStream stream, PhotonMessageInfo info )
 	{
@@ -336,15 +356,26 @@ public class PlayerScript : Photon.MonoBehaviour
 		{
 			stream.SendNext( transform.position );
 			stream.SendNext( transform.rotation );
-			stream.SendNext( speed );
+			stream.SendNext( transform.GetComponent<Rigidbody2D>().velocity );
+			stream.SendNext(transform.localScale);
 		}
 		else
 		{
+			currentTime = 0.0;
+			positionAtLastPacket = transform.position;
 			m_NetworkPosition = (Vector3)stream.ReceiveNext();
 			m_NetworkRotation = (Quaternion)stream.ReceiveNext();
 			m_Speed = (Vector2)stream.ReceiveNext();
+			m_NetworkScale = (Vector3)stream.ReceiveNext();
+
+			lastPacketTime = m_LastNetworkDataReceivedTime;
 			m_LastNetworkDataReceivedTime = info.timestamp;
 		}
+	}
+
+	void UpdateNetworkScale()
+	{
+		transform.localScale = Vector3.MoveTowards(transform.localScale, m_NetworkScale, 180f * Time.deltaTime);
 	}
 
 	void UpdateNetworkedPosition()
@@ -368,7 +399,7 @@ public class PlayerScript : Photon.MonoBehaviour
 			newPosition = exterpolatedTargetPosition;
 		}
 		
-		newPosition.y = Mathf.Clamp( newPosition.y, 0.5f, 50f );
+		//newPosition.y = Mathf.Clamp( newPosition.y, 0.5f, 50f );
 		
 		transform.position = newPosition;
 	}
