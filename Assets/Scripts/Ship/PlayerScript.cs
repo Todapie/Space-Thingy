@@ -33,6 +33,9 @@ public class PlayerScript : Photon.MonoBehaviour
 	private double currentTime = 0.0;
 	private Vector3 positionAtLastPacket = Vector3.zero;
 
+	private AudioSource source;
+	public AudioClip PEWPEW;
+
 	void Start() 
 	{
 		s = gameObject.AddComponent<Space>();
@@ -44,6 +47,8 @@ public class PlayerScript : Photon.MonoBehaviour
 		particles.transform.Rotate(0, transform.rotation.z, 0);
 		PhotonNetwork.sendRate = 20;
 		PhotonNetwork.sendRateOnSerialize = 10;
+
+		source = gameObject.AddComponent<AudioSource> ();
 	}
 
 	void OnTriggerEnter2D(Collider2D other)
@@ -203,6 +208,8 @@ public class PlayerScript : Photon.MonoBehaviour
 				weapon = GetComponent<WeaponScript> ();
 			else
 				weapon.Attack (false, inputRot, transform.localScale.x, size, PlayerID, damage, transform.position);
+		
+			source.PlayOneShot(PEWPEW, 1f);
 		}
 	}
 
