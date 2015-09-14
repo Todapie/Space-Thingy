@@ -29,6 +29,7 @@ public class PlayerScript : Photon.MonoBehaviour
 	private Vector3 m_NetworkScale;
 	private double timeToReachGoal = 0.0;
 	private double lastPacketTime = 0.0;
+	private double lastVelocityUpdateTime = 0.0;
 	private double currentPacketTime = 0.0;
 	private double currentTime = 0.0;
 	private Vector3 positionAtLastPacket = Vector3.zero;
@@ -266,6 +267,7 @@ public class PlayerScript : Photon.MonoBehaviour
 			UpdateNetworkedPosition();
 			UpdateNetworkedRotation();
 			UpdateNetworkScale();
+			UpdateNetworkVelocity();
 		}
 		Deaccelerate();
 	}
@@ -377,6 +379,16 @@ public class PlayerScript : Photon.MonoBehaviour
 
 			lastPacketTime = m_LastNetworkDataReceivedTime;
 			m_LastNetworkDataReceivedTime = info.timestamp;
+		}
+	}
+
+	void UpdateNetworkVelocity()
+	{
+		if(lastPacketTime > lastVelocityUpdateTime)
+		{
+			speed = m_Speed;
+			GetComponent<Rigidbody2D> ().velocity = m_Speed;
+			lastVelocityUpdateTime = lastPacketTime;
 		}
 	}
 
