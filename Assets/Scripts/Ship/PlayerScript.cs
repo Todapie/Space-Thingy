@@ -384,12 +384,12 @@ public class PlayerScript : Photon.MonoBehaviour
 
 	void UpdateNetworkVelocity()
 	{
-		if(lastPacketTime > lastVelocityUpdateTime)
-		{
+	//	if(lastPacketTime > lastVelocityUpdateTime)
+	//	{
 			speed = m_Speed;
 			GetComponent<Rigidbody2D> ().velocity = m_Speed;
 			lastVelocityUpdateTime = lastPacketTime;
-		}
+	//	}
 	}
 
 	void UpdateNetworkScale()
